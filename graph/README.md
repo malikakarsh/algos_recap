@@ -385,3 +385,81 @@ vector<int> topologicalSortDFS(vector<vector<int>>& adj, int V) {
 - [Find Eventual Safe States](https://leetcode.com/problems/find-eventual-safe-states/)
 - [Course Schedule](https://leetcode.com/problems/course-schedule/)
 - [Course Schedule II](https://leetcode.com/problems/course-schedule-ii/)
+- [Alien Dictionary](https://www.geeksforgeeks.org/problems/alien-dictionary)
+
+
+## Shortest Path in Weighted DAG
+
+**Key Idea**: For DAGs with weights, topological sort ensures we process vertices in correct order, avoiding unnecessary recursion calls and guaranteeing shortest paths.
+
+### Why Topological Sort is Essential?
+- **Optimal processing order**: Process vertices before their dependencies
+- **Single pass**: Each vertex is processed exactly once
+- **No cycles**: Eliminates infinite loops that can occur with negative weights
+- **Efficiency**: O(V + E) instead of O(VE) for Bellman-Ford
+
+### Implementation
+```cpp
+vector<int> shortestPathDAG(vector<vector<pair<int, int>>>& adj, int src, int V) {
+    // Step 1: Get topological order
+    vector<int> topoOrder = topologicalSort(adj, V);
+    
+    // Step 2: Initialize distances
+    vector<int> dist(V, INT_MAX);
+    dist[src] = 0;
+    
+    // Step 3: Process vertices in topological order
+    for (int node : topoOrder) {
+        if (dist[node] != INT_MAX) {
+            for (auto [neighbor, weight] : adj[node]) {
+                if (dist[node] + weight < dist[neighbor]) {
+                    dist[neighbor] = dist[node] + weight;
+                }
+            }
+        }
+    }
+    
+    // Optimization: Skip nodes before source in topological order
+    // They won't be reachable anyway, so no need to process them
+    
+    return dist;
+}
+```
+
+**Time Complexity**: O(V + E)  
+**Space Complexity**: O(V)
+
+**Optimization**: Skip nodes before source in topological order - they won't be reachable anyway.
+
+**Practice Problems**:
+- [Shortest path in Directed Acyclic Graph](https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-graph)
+
+## BFS vs DFS for Shortest Path (Unit Weights)
+
+### Why BFS Works for Shortest Path?
+- **Level-by-level exploration**: BFS visits vertices in order of their distance from source
+- **First visit is shortest**: When BFS first visits a vertex, it's guaranteed to be the shortest path
+- **Unit weights**: All edges have same weight, so distance = number of edges
+- **Optimal complexity**: O(V + E) - visits each vertex/edge at most once
+
+### Why DFS Fails (Exceeds Time Limit)?
+- **Depth-first exploration**: DFS goes deep into one path before exploring others
+- **May revisit vertices**: Can visit same vertex multiple times through different paths
+- **No guarantee of shortest**: First visit might not be the shortest path
+- **Exponential complexity**: Can explore exponentially many paths
+
+### Example
+```
+Graph: A -- B -- C
+       |    |
+       D -- E
+
+BFS from A: A(0) → B(1), D(1) → C(2), E(2)  // Optimal
+DFS from A: A → B → C → E → D → B → C...     // May revisit
+```
+
+**Practice Problems**:
+- [Shortest path in Undirected Graph with Unit Distance](https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-graph-having-unit-distance/)
+
+**Standard Problems**:
+- [Word Ladder](https://leetcode.com/problems/word-ladder/)
