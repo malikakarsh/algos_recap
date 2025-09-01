@@ -126,6 +126,38 @@ int arr2[size2];            // Always compiles
 
 **Key Difference**: `const` = "won't change", `constexpr` = "computed at compile time"
 
+### Memory Allocation Difference
+
+**constexpr - No Memory Allocation**:
+```cpp
+constexpr int size = 100;
+int arr[size];  // No memory allocated for 'size' variable
+```
+- **Compile-time constant**: Value embedded directly in machine code
+- **No storage**: Treated as literal, not a variable
+- **Direct substitution**: `arr[100]` instead of `arr[size]` in assembly
+
+**const - Memory May Be Allocated**:
+```cpp
+const int size = 100;
+int arr[size];  // May or may not work (compiler dependent)
+```
+- **Runtime variable**: Stored in memory as a variable
+- **Memory allocated**: Takes up space in program's data section
+- **Address can be taken**: `&size` is valid and points to actual memory
+
+**Key Insight**:
+```cpp
+const int x = 10;
+constexpr int y = 10;
+
+int* ptr1 = &x;        // OK - x has memory address
+// int* ptr2 = &y;     // ERROR - y has no memory address
+
+int arr1[x];           // May not compile (runtime constant)
+int arr2[y];           // Always compiles (compile-time constant)
+```
+
 ## Vector Reserve for Efficient Allocation
 
 ### Without Reserve (Inefficient)
