@@ -463,3 +463,240 @@ DFS from A: A → B → C → E → D → B → C...     // May revisit
 
 **Standard Problems**:
 - [Word Ladder](https://leetcode.com/problems/word-ladder/)
+- [Word Ladder ii](https://leetcode.com/problems/word-ladder-ii/)
+
+## Dijkstra's Algorithm (Shortest Path with Weights)
+
+**Definition**: Finds shortest paths from a source vertex to all other vertices in a weighted graph with non-negative edge weights.
+
+**Key Idea**: Greedily select the unvisited vertex with minimum distance and relax all its neighbors.
+
+### 1. Using Priority Queue (Most Efficient)
+```cpp
+vector<int> dijkstra(vector<vector<pair<int, int>>>& adj, int src, int V) {
+    vector<int> dist(V, INT_MAX);
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    
+    dist[src] = 0;
+    pq.push({0, src});  // {distance, vertex}
+    
+    while (!pq.empty()) {
+        int u = pq.top().second;
+        int d = pq.top().first;
+        pq.pop();
+        
+        if (d > dist[u]) continue;  // Skip outdated entries
+        
+        for (auto [v, weight] : adj[u]) {
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    
+    return dist;
+}
+```
+**Time Complexity**: O((V + E) log V)  
+**Space Complexity**: O(V)
+
+### 2. Using Simple Queue (Inefficient)
+```cpp
+vector<int> dijkstraQueue(vector<vector<pair<int, int>>>& adj, int src, int V) {
+    vector<int> dist(V, INT_MAX);
+    vector<bool> visited(V, false);
+    queue<int> q;
+    
+    dist[src] = 0;
+    q.push(src);
+    
+    while (!q.empty()) {
+        // Find minimum distance unvisited vertex in queue
+        int u = -1, minDist = INT_MAX;
+        queue<int> temp;
+        
+        while (!q.empty()) {
+            int curr = q.front();
+            q.pop();
+            if (!visited[curr] && dist[curr] < minDist) {
+                minDist = dist[curr];
+                u = curr;
+            }
+            temp.push(curr);
+        }
+        
+        q = temp;  // Restore queue
+        if (u == -1) break;
+        
+        visited[u] = true;
+        
+        for (auto [v, weight] : adj[u]) {
+            if (!visited[v] && dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                q.push(v);
+            }
+        }
+    }
+    
+    return dist;
+}
+```
+**Time Complexity**: O(V² + E)  
+**Space Complexity**: O(V)
+
+### 3. Using Hash Map with Set (Alternative)
+```cpp
+vector<int> dijkstraSet(vector<vector<pair<int, int>>>& adj, int src, int V) {
+    vector<int> dist(V, INT_MAX);
+    set<pair<int, int>> activeVertices;  // {distance, vertex}
+    
+    dist[src] = 0;
+    activeVertices.insert({0, src});
+    
+    while (!activeVertices.empty()) {
+        int u = activeVertices.begin()->second;
+        activeVertices.erase(activeVertices.begin());
+        
+        for (auto [v, weight] : adj[u]) {
+            if (dist[u] + weight < dist[v]) {
+                activeVertices.erase({dist[v], v});  // Remove old entry
+                dist[v] = dist[u] + weight;
+                activeVertices.insert({dist[v], v});  // Insert new entry
+            }
+        }
+    }
+    
+    return dist;
+}
+```
+**Time Complexity**: O((V + E) log V)  
+**Space Complexity**: O(V)
+
+## Efficiency Comparison
+
+| Implementation | Time Complexity | Space Complexity | Efficiency |
+|---------------|----------------|------------------|------------|
+| Priority Queue | O((V + E) log V) | O(V) | **Best** |
+| Set-based | O((V + E) log V) | O(V) | Good |
+| Simple Queue | O(V² + E) | O(V) | **Worst** |
+
+### Why Priority Queue is Most Efficient?
+
+1. **Optimal Time Complexity**: O((V + E) log V) vs O(V² + E) for simple queue
+2. **No Manual Search**: Priority queue automatically gives minimum distance vertex
+3. **Handles Duplicates**: Skip outdated entries efficiently
+4. **Standard Library**: Optimized implementation
+
+### When to Use Each?
+
+- **Priority Queue**: Default choice for most cases
+- **Set-based**: When you need to remove specific entries frequently
+- **Simple Queue**: Only for educational purposes (inefficient)
+
+**Applications**: GPS navigation, network routing, flight connections
+
+### Why Dijkstra Fails with Negative Weights?
+
+**Key Issue**: Dijkstra can get stuck in an infinite loop of decreasing distances when negative weights are present.
+
+### Simple Example with Negative Weights
+```
+Graph (undirected with negative weight):
+A ----(-1)---- B
+
+Or directed both ways:
+A <--(-1)-- B
+  --(-1)-->
+
+Source: A
+```
+
+**Dijkstra's Execution**:
+```
+Initial: dist[A] = 0, dist[B] = ∞
+
+Step 1: Process A (min distance = 0)
+- Update B: dist[B] = 0 + (-1) = -1
+
+Step 2: Process B (min distance = -1)  
+- Update A: dist[A] = min(0, -1 + (-1)) = min(0, -2) = -2
+- Now A has distance -2, which is less than 0!
+
+Step 3: Process A again (min distance = -2)
+- Update B: dist[B] = min(-1, -2 + (-1)) = min(-1, -3) = -3
+
+Step 4: Process B again (min distance = -3)
+- Update A: dist[A] = min(-2, -3 + (-1)) = min(-2, -4) = -4
+
+This continues infinitely: -2, -3, -4, -5, -6, ...
+```
+
+**The Problem**: 
+- Each time we process a vertex, we can make the other vertex's distance even more negative
+- The distances keep decreasing indefinitely: 0 → -1 → -2 → -3 → -4 → ...
+- Dijkstra never terminates because there's always a "better" (more negative) distance
+
+### Why This Happens
+1. **Dijkstra assumes shortest paths exist**: With negative cycles, there's no "shortest" path
+2. **Priority queue keeps finding "better" distances**: Negative weights create infinitely decreasing distances  
+3. **Algorithm never converges**: The termination condition (all vertices processed) is never met
+
+### Why This is Problematic
+**Negative cycles make "shortest path" undefined**:
+- In our example, path A→B has cost -1
+- Path A→B→A→B has cost -2  
+- Path A→B→A→B→A→B has cost -3
+- You can always find a "shorter" path by going around the cycle more times
+
+**Dijkstra's assumption broken**:
+- Dijkstra assumes that once you find the shortest distance to a vertex, it won't change
+- With negative cycles, distances can always be improved by taking more loops
+- The algorithm never reaches a stable state where all distances are final
+
+### Why This Happens
+1. **Greedy Choice**: Always picks unprocessed vertex with minimum distance
+2. **No Backtracking**: Once processed, a vertex is never reconsidered
+3. **Negative Edges**: Can create better paths through "processed" vertices
+
+### Correct Algorithm for Negative Weights
+Use **Bellman-Ford Algorithm** instead:
+- Time Complexity: O(VE)
+- Can detect negative cycles
+- Relaxes all edges V-1 times
+
+```cpp
+// Bellman-Ford (handles negative weights)
+bool bellmanFord(vector<vector<pair<int, int>>>& edges, int src, int V) {
+    vector<int> dist(V, INT_MAX);
+    dist[src] = 0;
+    
+    // Relax all edges V-1 times
+    for (int i = 0; i < V - 1; i++) {
+        for (auto& edge : edges) {
+            int u = edge[0], v = edge[1], w = edge[2];
+            if (dist[u] != INT_MAX && dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+            }
+        }
+    }
+    
+    // Check for negative cycles
+    for (auto& edge : edges) {
+        int u = edge[0], v = edge[1], w = edge[2];
+        if (dist[u] != INT_MAX && dist[u] + w < dist[v]) {
+            return false;  // Negative cycle detected
+        }
+    }
+    return true;
+}
+```
+
+**Practice Problems**:
+
+- [Dijkstra Algorithm](https://www.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix)
+- [Shortest Path In Weighted Undirected Graph](https://www.geeksforgeeks.org/problems/shortest-path-in-weighted-undirected-graph/1)
+- [Shortest Distance In a Binary Matrix](https://leetcode.com/problems/shortest-path-in-binary-matrix/description/)
+- [Network Delay Time](https://leetcode.com/problems/network-delay-time/)
+- [Path with Maximum Probability](https://leetcode.com/problems/path-with-maximum-probability/)
+
