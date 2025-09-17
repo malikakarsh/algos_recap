@@ -699,4 +699,6 @@ bool bellmanFord(vector<vector<pair<int, int>>>& edges, int src, int V) {
 - [Shortest Distance In a Binary Matrix](https://leetcode.com/problems/shortest-path-in-binary-matrix/description/)
 - [Network Delay Time](https://leetcode.com/problems/network-delay-time/)
 - [Path with Maximum Probability](https://leetcode.com/problems/path-with-maximum-probability/)
-
+ - [Cheapest Flights Within K Stops](https://leetcode.com/problems/cheapest-flights-within-k-stops/description/)
+- [Minimum Multiplications To Reach End](https://www.geeksforgeeks.org/problems/minimum-multiplications-to-reach-end/1)
+- [Number Of Ways To Arrive At Destination](https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/submissions/1774018133/)
