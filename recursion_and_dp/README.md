@@ -304,6 +304,72 @@ void generatePermutations(vector<int>& nums, vector<int>& current, vector<bool>&
 }
 ```
 
+#### Permutations (in-place, no extra space)
+```cpp
+void genPermutations(vector<int>& nums, int i, vector<vector<int>>& result) {
+    if (i == (int)nums.size()) {
+        result.emplace_back(nums);
+        return;
+    }
+    for (int j = i; j < (int)nums.size(); ++j) {
+        swap(nums[i], nums[j]);
+        genPermutations(nums, i + 1, result);
+        swap(nums[i], nums[j]);
+    }
+}
+
+vector<vector<int>> permute(vector<int> nums) {
+    vector<vector<int>> result;
+    genPermutations(nums, 0, result);
+    return result;
+}
+```
+
+#### Backtracking Pattern: Start Index + Skip Duplicates (Combination Sum II)
+
+Intuition:
+- **Sort first**: Sorting lets us prune early when the current number exceeds the remaining `target`, and makes duplicate detection simple.
+- **Start from an index `idx`**: Each recursive level chooses elements from positions `i >= idx`. This avoids permutations of the same combination by enforcing a left-to-right choice order.
+- **Skip duplicates at the same depth**: If `candidates[i] == candidates[i-1]` and `i > idx`, skip `i` to avoid generating the same combination multiple times.
+- **Prune**: Because of sorting, as soon as `candidates[i] > target`, break the loop.
+- **Backtrack**: Choose → recurse with `i+1` (each number used at most once) → un-choose.
+
+Correct and concise implementation based on your snippet (minor fixes: compare with `candidates[i]`, avoid globals, add pruning and references):
+
+```cpp
+void chooseCombination(const vector<int>& candidates,
+                       int idx,
+                       int target,
+                       vector<int>& current,
+                       vector<vector<int>>& result) {
+    if (target == 0) {
+        result.emplace_back(current);
+        return;
+    }
+
+    for (int i = idx; i < (int)candidates.size(); ++i) {
+        if (i > idx && candidates[i] == candidates[i - 1]) continue; // skip duplicates at this depth
+        if (candidates[i] > target) break;                            // prune (sorted)
+
+        current.emplace_back(candidates[i]);
+        chooseCombination(candidates, i + 1, target - candidates[i], current, result);
+        current.pop_back();
+    }
+}
+
+vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+    sort(candidates.begin(), candidates.end());
+    vector<vector<int>> result;
+    vector<int> current;
+    chooseCombination(candidates, 0, target, current, result);
+    return result;
+}
+```
+
+Complexity:
+- Time: `O(n log n)` to sort, plus `O(n * 2^n)` in the worst case for backtracking (subset exploration with pruning). More precisely, proportional to the number of valid combinations times average combination length.
+- Space: `O(n)` auxiliary for recursion depth and current path (excluding the output list of combinations).
+
 ### 3. **Divide and Conquer**
 ```cpp
 int mergeSort(vector<int>& arr, int left, int right) {
@@ -380,3 +446,183 @@ int factorial(int n, int depth = 0) {
 - **Avoid when**: Simple iteration suffices or deep recursion expected
 
 **Key Insight**: Recursion trades **space** (call stack) for **code simplicity** and **problem decomposition**.
+
+### Practice Problems:
+- [Combination Sum](https://leetcode.com/problems/combination-sum/)
+- [Subsets](https://leetcode.com/problems/subsets/)
+- [Subsets II](https://leetcode.com/problems/subsets-ii)
+- [Subset Sums](https://www.geeksforgeeks.org/problems/subset-sums2234/1)
+- [Permutations](https://leetcode.com/problems/permutations/)
+- [Fibonacci Numbers](https://leetcode.com/problems/fibonacci-number)
+- [House Robber](https://leetcode.com/problems/house-robber/)
+- [House Robber II](https://leetcode.com/problems/house-robber-ii/)
+- [Geeks Training](https://www.geeksforgeeks.org/problems/geeks-training/1)
+- [Unique Paths](https://leetcode.com/problems/unique-paths/)
+- [Maximum Sum Path In Matrix](https://www.geeksforgeeks.org/problems/path-in-matrix3805/1)
+- [Chocolates Pickup](https://www.geeksforgeeks.org/problems/chocolates-pickup/1)
+- [Subset Sum](https://www.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1)
+- [Partition Equal Subset Sum](https://leetcode.com/problems/partition-equal-subset-sum/)
+- [Perfect Sum Problem](https://www.geeksforgeeks.org/problems/perfect-sum-problem5633/1)
+- [Partition With Given Difference](https://www.geeksforgeeks.org/problems/partitions-with-given-difference/1)
+- [0-1 Knapsack](https://www.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1)
+- [Coin Change](https://leetcode.com/problems/coin-change)
+- [Target Sum](https://leetcode.com/problems/target-sum/)
+- [Coin Change II](https://leetcode.com/problems/coin-change-ii)
+- [Unbounded Knapsack](https://www.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1)
+-[Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/description/)
+- [Longest Common Substring](https://www.geeksforgeeks.org/problems/longest-common-substring1452/1)
+- [Longest Palindromic Subsequence](https://leetcode.com/problems/longest-palindromic-subsequence/)
+- [Minimum Insertions Steps To Make A String Palindrome](https://leetcode.com/problems/minimum-insertion-steps-to-make-a-string-palindrome/)
+- [Delete Operation For Two Strings](https://leetcode.com/problems/delete-operation-for-two-strings/)
+- [Shortest Common Supersequence](https://leetcode.com/problems/shortest-common-supersequence/)
+- [Distinct Subsequences](https://leetcode.com/problems/distinct-subsequences/)
+- [Edit Distance](https://leetcode.com/problems/edit-distance/)
+- [Rod Cutting](https://www.geeksforgeeks.org/problems/rod-cutting0840/1)
+- [Best TIme To Buy And Sell Stocks](https://leetcode.com/problems/best-time-to-buy-and-sell-stock)
+- [Best Time To Buy And Sell Stocks II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
+- [Best TIme To Buy And Sell Stock With Cooldown](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/description/)
+- [Best Time To Buy And Sell Stocks III](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/)
+- [Best TIme To Buy And Sell Stocks IV](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/description/)
+- [Last Stone Weight II](https://leetcode.com/problems/last-stone-weight-ii/description/)
+- [Profitable Schemes](https://leetcode.com/problems/profitable-schemes/)
+- [Best TIme To Buy And Sell Stock With Transaction Fee](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/description/)
+- [Ones And Zeroes](https://leetcode.com/problems/ones-and-zeroes/)
+
+### Longest Increasing Subsequence
+```CPP
+int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        vector<int>dp(n,1);
+        int LIS = 1;
+  
+        for (int i=1;i<n;i++){
+            for (int j=0;j<i;j++){
+                if (nums[j] < nums[i] )
+                    dp[i] = max(dp[i],1 + dp[j]);
+            }
+            LIS = max(LIS,dp[i]);
+        }
+        return LIS;
+    }
+```
+#### Printing the LIS
+```CPP
+int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        vector<int>dp(n,1);
+        int LIS = 1;
+        vector<int>back(n);
+        int ind = 0;
+        back[0] = 0;
+        for (int i=1;i<n;i++){
+            back[i] = i;
+            for (int j=0;j<i;j++){
+                if (nums[j] < nums[i] && (1 + dp[j]) > dp[i]){
+                    dp[i] = 1 + dp[j];
+                    back[i] = j;
+                }
+                    
+            }
+            if (dp[i] > LIS){
+                ind = i;
+                LIS = dp[i];
+            }
+        }
+        vector<int>res;
+        while (back[ind] != ind){
+            res.push_back(nums[ind]);
+            ind = back[ind];
+        }
+        res.push_back(nums[ind]);
+        reverse(res.begin(),res.end());
+
+
+        for (auto num:res)
+            cout<<num<<" ";
+        cout<<endl;
+        
+        return LIS;
+    }
+```
+- [Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/)
+- [Largest Divisible Subset](https://leetcode.com/problems/largest-divisible-subset/description/)
+- [Longest String Chain](https://leetcode.com/problems/longest-string-chain/description/)
+- [Longest Bitonic Subsequence](https://www.geeksforgeeks.org/problems/longest-bitonic-subsequence0824/)
+- [Number of Longest Increasing Subsequence](https://leetcode.com/problems/number-of-longest-increasing-subsequence/description/)
+
+---
+
+## Matrix Chain Multiplication (MCM)
+
+### Intuition
+- We have matrices A1, A2, ..., A_{n-1}. Matrix Ai has dimensions `arr[i-1] x arr[i]`. Multiplication is associative, so we can parenthesize in many ways; the cost (# of scalar multiplications) depends on the parenthesization.
+- DP over intervals: let `dp[i][j]` be the minimum cost to multiply matrices `Ai ... Aj` (1-based i ≤ j).
+- If we split between `k` and `k+1`, the total cost is:
+  - cost of left: `dp[i][k]`
+  - cost of right: `dp[k+1][j]`
+  - cost to multiply the two resulting matrices: `arr[i-1] * arr[k] * arr[j]`
+    - Why this term? After multiplying `Ai..Ak`, you get a matrix of size `arr[i-1] x arr[k]`. After multiplying `A{k+1}..Aj`, you get a matrix of size `arr[k] x arr[j]`. Multiplying those two costs exactly `arr[i-1] * arr[k] * arr[j]` scalar multiplications.
+- Recurrence:
+  - `dp[i][i] = 0`
+  - `dp[i][j] = min over k in [i..j-1] of ( dp[i][k] + dp[k+1][j] + arr[i-1]*arr[k]*arr[j] )`
+
+### Memoization (top-down)
+```cpp
+int mcmMemoUtil(const vector<int>& arr, int i, int j, vector<vector<int>>& dp) {
+    if (i == j) return 0;
+    int& memo = dp[i][j];
+    if (memo != -1) return memo;
+    int best = INT_MAX;
+    for (int k = i; k <= j - 1; ++k) {
+        long long cost = (long long)arr[i - 1] * arr[k] * arr[j]
+                       + mcmMemoUtil(arr, i, k, dp)
+                       + mcmMemoUtil(arr, k + 1, j, dp);
+        best = min(best, (int)cost);
+    }
+    return memo = best;
+}
+
+int matrixMultiplicationMemo(vector<int>& arr) {
+    int n = (int)arr.size();            // # matrices = n-1
+    vector<vector<int>> dp(n, vector<int>(n, -1));
+    return mcmMemoUtil(arr, 1, n - 1, dp);
+}
+```
+
+### Tabulation (bottom-up)
+```cpp
+int matrixMultiplication(vector<int>& arr) {
+    int n = (int)arr.size();            // matrices: A1..A_{n-1}
+    vector<vector<int>> dp(n, vector<int>(n, 0));
+
+    // Fill using i, j, k (no explicit 'len')
+    for (int i = n - 1; i >= 1; --i) {
+        for (int j = i + 1; j <= n - 1; ++j) {
+            int best = INT_MAX;
+            for (int k = i; k <= j - 1; ++k) {
+                long long cost = (long long)arr[i - 1] * arr[k] * arr[j]
+                               + dp[i][k] + dp[k + 1][j];
+                best = min(best, (int)cost);
+            }
+            dp[i][j] = best;
+        }
+    }
+    return dp[1][n - 1];
+}
+```
+
+Notes:
+- Both approaches are O(n^3) time and O(n^2) space, where n = arr.size().
+- Use 1-based indices for matrices: Ai has dimensions arr[i-1] x arr[i].
+- If you also need the optimal parenthesization, keep a `cut[i][j] = argmin k` and reconstruct.
+
+### Practice Problems:
+- [Matrix Chain Multiplication](https://www.geeksforgeeks.org/problems/matrix-chain-multiplication0303/1)
+- [Minimum Cost To Cut A Stick](https://leetcode.com/problems/minimum-cost-to-cut-a-stick/description/)
+
+### **1D DP Problems**
+- [Climbing Stairs](https://leetcode.com/problems/climbing-stairs/description/)
+- [Climbing Stairs II](https://leetcode.com/problems/climbing-stairs-ii/description/)
+- [House Robber](https://leetcode.com/problems/house-robber/)
+- [House Robber II](https://leetcode.com/problems/house-robber-ii/)
+- [House Robber III](https://leetcode.com/problems/house-robber-iii/description/)

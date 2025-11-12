@@ -134,6 +134,7 @@ void bfs(vector<vector<int>>& adj, int start) {
 - [Number of Provinces](https://leetcode.com/problems/number-of-provinces/)
 - [Flood Fill](https://leetcode.com/problems/flood-fill/)
 - [Rotting Oranges](https://leetcode.com/problems/rotting-oranges/)
+- [Magic Squares In Grid](https://leetcode.com/problems/magic-squares-in-grid/)
 
 ## Cycle Detection in Undirected Graph
 
@@ -277,6 +278,61 @@ bool dfsCheckCycle(vector<vector<int>>& adj, vector<int>& state, int node) {
 
 **Practice Problems**:
 - [Detect Cycle in Directed Graph](https://www.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph)
+
+## Strongly Connected Components (Kosaraju's Algorithm)
+
+Definition: In a directed graph, a strongly connected component (SCC) is a maximal set of vertices where every vertex is reachable from every other vertex.
+
+Key idea (two DFS passes):
+- Pass 1 on original graph: run DFS and push vertices to `order` by finishing time (post-order).
+- Compute transpose graph G^T (reverse all edges).
+- Pass 2 on G^T: process vertices in reverse `order`; each DFS tree yields one SCC.
+
+Why it works: Any edge from an SCC to another goes forward in finish-time order; reversing edges forces DFS to stay inside one SCC when started from the latest-finishing vertex.
+
+Complexity: O(V + E) time, O(V + E) space.
+
+```cpp
+// Kosaraju's algorithm: returns list of SCCs (each SCC is a vector of vertices)
+vector<vector<int>> kosarajuSCC(const vector<vector<int>>& adj) {
+    int V = (int)adj.size();
+    vector<int> order; order.reserve(V);
+    vector<char> vis(V, 0);
+
+    function<void(int)> dfsOrder = [&](int u) {
+        vis[u] = 1;
+        for (int v : adj[u]) if (!vis[v]) dfsOrder(v);
+        order.push_back(u); // record by finish time
+    };
+
+    for (int u = 0; u < V; ++u) if (!vis[u]) dfsOrder(u);
+
+    // Build transpose graph G^T
+    vector<vector<int>> radj(V);
+    for (int u = 0; u < V; ++u) for (int v : adj[u]) radj[v].push_back(u);
+
+    // Second pass on G^T in reverse finish order
+    fill(vis.begin(), vis.end(), 0);
+    vector<vector<int>> components;
+    function<void(int, vector<int>&)> dfsCollect = [&](int u, vector<int>& comp) {
+        vis[u] = 1; comp.push_back(u);
+        for (int v : radj[u]) if (!vis[v]) dfsCollect(v, comp);
+    };
+
+    for (int i = V - 1; i >= 0; --i) {
+        int u = order[i];
+        if (!vis[u]) {
+            vector<int> comp;
+            dfsCollect(u, comp);
+            components.push_back(move(comp));
+        }
+    }
+    return components;
+}
+```
+
+Practice Problem:
+@https://www.geeksforgeeks.org/problems/strongly-connected-components-kosarajus-algo/1
 
 ## Kahn's Algorithm (Topological Sort)
 
@@ -433,6 +489,7 @@ vector<int> shortestPathDAG(vector<vector<pair<int, int>>>& adj, int src, int V)
 
 **Practice Problems**:
 - [Shortest path in Directed Acyclic Graph](https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-graph)
+- [All Paths From Source To Target](https://leetcode.com/problems/all-paths-from-source-to-target/)
 
 ## BFS vs DFS for Shortest Path (Unit Weights)
 
@@ -666,30 +723,71 @@ Use **Bellman-Ford Algorithm** instead:
 - Relaxes all edges V-1 times
 
 ```cpp
-// Bellman-Ford (handles negative weights)
-bool bellmanFord(vector<vector<pair<int, int>>>& edges, int src, int V) {
-    vector<int> dist(V, INT_MAX);
+// Bellman-Ford (handles negative weights and detects negative cycles)
+// edges: list of directed edges (u, v, w)
+bool bellmanFord(const vector<tuple<int,int,int>>& edges, int V, int src, vector<long long>& dist) {
+    dist.assign(V, LLONG_MAX);
     dist[src] = 0;
-    
+
     // Relax all edges V-1 times
     for (int i = 0; i < V - 1; i++) {
-        for (auto& edge : edges) {
-            int u = edge[0], v = edge[1], w = edge[2];
-            if (dist[u] != INT_MAX && dist[u] + w < dist[v]) {
+        bool changed = false;
+        for (auto [u, v, w] : edges) {
+            if (dist[u] == LLONG_MAX) continue;
+            if (dist[u] + w < dist[v]) {
                 dist[v] = dist[u] + w;
+                changed = true;
             }
         }
+        if (!changed) break; // Early exit if no updates
     }
-    
-    // Check for negative cycles
-    for (auto& edge : edges) {
-        int u = edge[0], v = edge[1], w = edge[2];
-        if (dist[u] != INT_MAX && dist[u] + w < dist[v]) {
-            return false;  // Negative cycle detected
+
+    // Check for negative cycles: if we can relax once more, cycle exists
+    for (auto [u, v, w] : edges) {
+        if (dist[u] != LLONG_MAX && dist[u] + w < dist[v]) {
+            return false; // Negative cycle reachable from src
         }
     }
     return true;
 }
+```
+
+Why V-1 iterations?
+- Any simple shortest path has at most V-1 edges. After i-th pass, all shortest paths using at most i edges are settled, so V-1 passes suffice to propagate all improvements without cycles.
+
+How to detect negative cycles?
+- Run one additional pass. If any edge (u, v, w) can still be relaxed (i.e., dist[u] + w < dist[v]), there exists a reachable negative-weight cycle.
+
+Complexity:
+- Time: O(VE)
+- Space: O(V)
+
+Note on Undirected Graphs with Bellman-Ford
+- Bellman-Ford is defined on directed graphs. For an undirected weighted graph, convert each undirected edge (u, v, w) into two directed edges: (u → v, w) and (v → u, w).
+- Warning: If any undirected edge has a negative weight (w < 0), those two directed edges form a 2-edge negative cycle of total weight 2w < 0. In that case, shortest paths are undefined; Bellman-Ford will correctly flag a negative cycle.
+
+Example conversion (undirected to directed)
+```cpp
+// Undirected adjacency list: adj[u] = vector of {v, w}
+vector<vector<pair<int,int>>> adj(V);
+// ... fill adj with undirected edges ...
+
+vector<tuple<int,int,int>> edges; // directed edge list for Bellman-Ford
+for (int u = 0; u < V; ++u) {
+    for (auto [v, w] : adj[u]) {
+        if (u < v) { // ensure each undirected edge produces exactly two directed edges
+            edges.emplace_back(u, v, w); // u -> v
+            edges.emplace_back(v, u, w); // v -> u
+        }
+    }
+}
+```
+
+Negative-edge caveat example
+```
+Undirected: 0 --(-5)-- 1
+Converted:  0 → 1 (-5) and 1 → 0 (-5)
+Cycle weight = -5 + -5 = -10 < 0 ⇒ negative cycle detected
 ```
 
 **Practice Problems**:
@@ -702,3 +800,191 @@ bool bellmanFord(vector<vector<pair<int, int>>>& edges, int src, int V) {
  - [Cheapest Flights Within K Stops](https://leetcode.com/problems/cheapest-flights-within-k-stops/description/)
 - [Minimum Multiplications To Reach End](https://www.geeksforgeeks.org/problems/minimum-multiplications-to-reach-end/1)
 - [Number Of Ways To Arrive At Destination](https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/submissions/1774018133/)
+- [Distance From The Source Bellman Ford Algorithm](https://www.geeksforgeeks.org/problems/distance-from-the-source-bellman-ford-algorithm/1)
+
+## Minimum Spanning Tree (MST)
+
+**Definition**: For a connected, undirected, weighted graph, a Minimum Spanning Tree is a subset of edges that connects all vertices, has no cycles, and has the minimum possible total weight. An MST always has exactly `V - 1` edges.
+
+### Small Example
+```
+Vertices: 0, 1, 2, 3
+Edges (undirected):
+0--1 (1), 0--2 (4), 1--2 (2), 1--3 (5), 2--3 (3)
+
+One MST: {0--1(1), 1--2(2), 2--3(3)} → total weight = 6
+```
+
+### Prim's Algorithm (Min-Heap)
+Key idea: Start from any vertex and grow the tree by repeatedly adding the lightest edge that connects the current tree to a new vertex. We can store `(weight, node, parent)` directly in the heap and avoid a separate parent array.
+
+```cpp
+// Prim's MST using adjacency list and a min-heap (priority queue)
+// Graph is undirected. adj[u] stores pairs (v, w) for edge u--v with weight w.
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Edge { int u, v; long long w; };
+
+vector<Edge> primMST(const vector<vector<pair<int,long long>>>& adj) {
+    int V = (int)adj.size();
+    vector<bool> inMST(V, false);
+
+    // Min-heap of (weight, node, parent)
+    using T = tuple<long long,int,int>;
+    priority_queue<T, vector<T>, greater<T>> pq;
+
+    int src = 0;
+    pq.emplace(0LL, src, -1);
+
+    vector<Edge> mst;
+    while (!pq.empty()) {
+        auto [w, u, p] = pq.top(); pq.pop();
+        if (inMST[u]) continue;
+        inMST[u] = true;
+        if (p != -1) mst.push_back({p, u, w});
+
+        for (auto [v, wt] : adj[u]) {
+            if (!inMST[v]) pq.emplace(wt, v, u);
+        }
+    }
+    return mst;
+}
+
+int main() {
+    int V = 4;
+    vector<vector<pair<int,long long>>> adj(V);
+    auto add = [&](int u, int v, long long w){ adj[u].push_back({v,w}); adj[v].push_back({u,w}); };
+    add(0,1,1); add(0,2,4); add(1,2,2); add(1,3,5); add(2,3,3);
+
+    auto mst = primMST(adj);
+    long long total = 0;
+    for (auto &e : mst) total += e.w;
+    cout << "MST total weight = " << total << "\n"; // Expect 6
+}
+```
+
+Complexity:
+- Time: O((V + E) log V) with a binary heap
+- Space: O(V + E)
+
+### Kruskal's Algorithm (Sort + DSU)
+Key idea: Sort all edges by weight and add them in increasing order, skipping any edge that would form a cycle. Use DSU to test connectivity efficiently.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Edge { int u, v; long long w; };
+
+// Assumes the DSU class from below is available (findParent/unionBySize)
+vector<Edge> kruskalMST(int V, vector<Edge> edges) {
+    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b){ return a.w < b.w; });
+    DSU dsu(V);
+    vector<Edge> mst;
+    for (const auto& e : edges) {
+        if (dsu.findParent(e.u) != dsu.findParent(e.v)) {
+            dsu.unionBySize(e.u, e.v);
+            mst.push_back(e);
+            if ((int)mst.size() == V - 1) break;
+        }
+    }
+    return mst; // for connected graphs, size will be V-1
+}
+
+int main() {
+    int V = 4;
+    vector<Edge> edges = {
+        {0,1,1}, {0,2,4}, {1,2,2}, {1,3,5}, {2,3,3}
+    };
+    auto mst = kruskalMST(V, edges);
+    long long total = 0;
+    for (auto &e : mst) total += e.w;
+    cout << "MST total weight = " << total << "\n"; // Expect 6
+}
+```
+
+Complexity:
+- Sorting edges: O(E log E)
+- DSU operations: ~O(E α(V))
+- Total: O(E log E)
+
+## Disjoint Set Union (Union-Find)
+
+Maintains a partition of elements into disjoint sets with near O(1) amortized operations.
+- `find(x)`: representative of x's set (with path compression)
+- `union(a, b)`: merge sets using union-by-rank or union-by-size
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+class DSU {
+    vector<int> parent;
+    vector<int> rank; // used by union-by-rank
+    vector<int> size; // used by union-by-size
+public:
+    explicit DSU(int n) : parent(n), rank(n, 0), size(n, 1) {
+        iota(parent.begin(), parent.end(), 0);
+    }
+    int findParent(int x) {
+        if (parent[x] == x) return x;
+        return parent[x] = findParent(parent[x]); // path compression
+    }
+    // Union by Rank (height heuristic)
+    bool unionByRank(int u, int v) {
+        int upu = findParent(u);
+        int upv = findParent(v);
+        if (upu == upv) return false;
+        if (rank[upu] == rank[upv]) {
+            parent[upu] = parent[upv];
+            rank[upv]++;
+        } else if (rank[upu] < rank[upv]) {
+            parent[upu] = parent[upv];
+        } else {
+            parent[upv] = parent[upu];
+        }
+        return true;
+    }
+    // Union by Size (attach smaller to larger)
+    bool unionBySize(int u, int v) {
+        int upu = findParent(u);
+        int upv = findParent(v);
+        if (upu == upv) return false;
+        if (size[upu] < size[upv]) {
+            size[upv] += size[upu];
+            parent[upu] = parent[upv];
+        } else {
+            size[upu] += size[upv];
+            parent[upv] = parent[upu];
+        }
+        return true;
+    }
+    int sizeOfSet(int x) { return size[findParent(x)]; }
+};
+
+int main() {
+    DSU d1(5);
+    d1.unionByRank(0,1);
+    d1.unionByRank(1,2);
+    cout << d1.findParent(2) << "\n"; // representative of {0,1,2}
+
+    DSU d2(5);
+    d2.unionBySize(3,4);
+    d2.unionBySize(2,3);
+    cout << d2.sizeOfSet(4) << "\n"; // 3
+}
+```
+
+Notes:
+- Path compression + union heuristic → almost O(1) per operation.
+- Use either rank or size consistently in one run.
+
+### Practice Problems
+- [Min Cost To Connect All Points](https://leetcode.com/problems/min-cost-to-connect-all-points/submissions/1783676159/?envType=problem-list-v2&envId=minimum-spanning-tree)
+- [Number Of Provinces](https://leetcode.com/problems/number-of-provinces/)
+- [Number Of Operations To Make Network Connected](https://leetcode.com/problems/number-of-operations-to-make-network-connected/)
+- [Minimum Path Sum](https://leetcode.com/problems/minimum-path-sum/)
+- [Redundant Connection](https://leetcode.com/problems/redundant-connection/)
+- [Count The Number Of Complete Components](https://leetcode.com/problems/count-the-number-of-complete-components)
+- [Path With Maximum Probability](https://leetcode.com/problems/path-with-maximum-probability/)

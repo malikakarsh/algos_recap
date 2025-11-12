@@ -421,3 +421,26 @@ Linked lists are fundamental data structures that offer:
 - **Flexibility**: Easy to modify structure
 
 **Key Takeaway**: Stacks and Queues are **concepts** that can be implemented using arrays, linked lists, or other data structures. Linked lists are particularly useful when you need dynamic sizing and frequent insertions/deletions.
+
+### Practice Problems:
+- [Intersection Of Two Linked Lists](https://leetcode.com/problems/intersection-of-two-linked-lists/)
+
+```CPP
+ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        ListNode *d1 = headA, *d2 = headB;
+        while (d1 != d2){
+            if (d1 == NULL)
+                d1 = headB;
+            else
+                d1 = d1->next;
+            if (d2 == NULL)
+                d2 = headA;
+            else
+                d2 = d2->next;
+        }
+        return d1;
+    }
+```
+
+### Practice Problems:
+- [Odd Even Linked List](https://leetcode.com/problems/odd-even-linked-list/description/)

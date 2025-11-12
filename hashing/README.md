@@ -734,3 +734,6 @@ class GoodHashTable {
 - [Continous Subarray Sum](https://leetcode.com/problems/continuous-subarray-sum/description/)
 - [Count Subarray With Given Xor](https://www.geeksforgeeks.org/problems/count-subarray-with-given-xor/1#)
 - [Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/submissions/1773255078/)
+- [Longest Subarry With Sum K](https://www.geeksforgeeks.org/problems/longest-sub-array-with-sum-k0809/1)
+- [Product Of Array Except Self](https://leetcode.com/problems/product-of-array-except-self/)
+- [Construct Product Matrix](https://leetcode.com/problems/construct-product-matrix/)
