@@ -3,6 +3,7 @@
 - [Move Zeroes](https://leetcode.com/problems/move-zeroes/)
 - [Missing Numbers](https://leetcode.com/problems/missing-number/)
 - [Max Consecutive Ones](https://leetcode.com/problems/max-consecutive-ones/)
+- [Longest Even odd Subarray With Threshold](https://leetcode.com/problems/longest-even-odd-subarray-with-threshold/description/)
 
 ---
 
@@ -90,5 +91,6 @@ int maxProduct(const vector<int>& nums) {
     return best;
 }
 ```
+
 
 

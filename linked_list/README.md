@@ -444,3 +444,5 @@ ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
 
 ### Practice Problems:
 - [Odd Even Linked List](https://leetcode.com/problems/odd-even-linked-list/description/)
+- [Merge K Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/description/)
+- [Reverse Nodes In K Group](https://leetcode.com/problems/reverse-nodes-in-k-group/description/)

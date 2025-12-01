@@ -491,6 +491,7 @@ bool isBalanced(TreeNode* root) {
 - [Vertical Order Traversal Of A Binary Tree](https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/)
 - [Bottom View Of Binary Tree](https://www.geeksforgeeks.org/problems/bottom-view-of-binary-tree/)
 - [Binary Tree Right Side View](https://leetcode.com/problems/binary-tree-right-side-view/description/)
+- [Flip Equivalent Binary Trees](https://leetcode.com/problems/flip-equivalent-binary-trees/)
 
 ### Binary Tree Right Side View
 

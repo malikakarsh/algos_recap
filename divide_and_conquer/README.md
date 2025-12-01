@@ -124,5 +124,136 @@ long long countSignificantInversions(vector<int>& A) {
 }
 ```
 
+---
 
+## Weighted Inversion Counting
+
+### Problem Statement
+Given two arrays of length `n`:
+- `A` (values): Array of numerical values
+- `W` (weights): Array of positive weights, where `W[i]` is the weight for `A[i]`
+
+A pair `(i, j)` with `i < j` and `A[i] > A[j]` is a **weighted inversion**. Its contribution is `W[i]` (the weight of the first element).
+
+**Goal**: Compute the total sum of weights for all such inversions:
+```
+Total Weighted Inversions = Σ W[i] for all (i,j) where i<j and A[i]>A[j]
+```
+
+### Test Cases
+
+**Test Case 1**: Simple mix of weights and values
+```
+Index:  1   2   3   4
+A:      5   2   5   1
+W:      10  3   7   4
+
+Inversions:
+- (1,2): A[1]=5 > A[2]=2 → contributes W[1]=10
+- (1,4): A[1]=5 > A[4]=1 → contributes W[1]=10
+- (2,4): A[2]=2 > A[4]=1 → contributes W[2]=3
+- (3,4): A[3]=5 > A[4]=1 → contributes W[3]=7
+
+Expected: 10 + 10 + 3 + 7 = 30
+```
+
+**Test Case 2**: Max inversions with small weights on large numbers
+```
+Index:  1   2   3   4   5
+A:      4   7   2   3   1
+W:      10  1   5   8   2
+
+Expected: 30 + 3 + 5 + 8 + 0 = 46
+```
+
+### Algorithm: Merge Sort Based (O(n log n))
+
+**Intuition**: Similar to standard inversion counting, but instead of counting pairs, we sum the weights of the first element in each inversion. During merge, when `A[i] > A[j]` (left element greater than right), all remaining elements in the right half (from current `j` to `r`) form inversions with `A[i]`, contributing `W[i]` for each.
+
+**Key insight**: When merging sorted halves, if `A[leftIdx] <= A[rightIdx]`, we take the left element. At this point, it has already been compared with all right elements processed so far (which were smaller), so we add `W[leftIdx] × countOfProcessedRightElements`.
+
+### Code (C++)
+```cpp
+long long mergeWeightedInversions(vector<int>& values, vector<int>& weights,
+                                   int left, int mid, int right) {
+    vector<int> sortedValues, sortedWeights;
+    sortedValues.reserve(right - left + 1);
+    sortedWeights.reserve(right - left + 1);
+
+    int leftIdx = left, rightIdx = mid + 1;
+    long long weightedInversions = 0;
+    int rightElementsProcessed = 0;  // count of right elements already merged
+
+    while (leftIdx <= mid && rightIdx <= right) {
+        if (values[leftIdx] <= values[rightIdx]) {
+            // Left element goes first: it has inversions with all processed right elements
+            sortedValues.push_back(values[leftIdx]);
+            sortedWeights.push_back(weights[leftIdx]);
+            weightedInversions += (long long)weights[leftIdx] * rightElementsProcessed;
+            ++leftIdx;
+        } else {
+            // Right element is smaller: just merge it, increment processed count
+            sortedValues.push_back(values[rightIdx]);
+            sortedWeights.push_back(weights[rightIdx]);
+            ++rightElementsProcessed;
+            ++rightIdx;
+        }
+    }
+
+    // Remaining left elements: each has inversions with all processed right elements
+    while (leftIdx <= mid) {
+        sortedValues.push_back(values[leftIdx]);
+        sortedWeights.push_back(weights[leftIdx]);
+        weightedInversions += (long long)weights[leftIdx] * rightElementsProcessed;
+        ++leftIdx;
+    }
+
+    // Remaining right elements: no inversions to count
+    while (rightIdx <= right) {
+        sortedValues.push_back(values[rightIdx]);
+        sortedWeights.push_back(weights[rightIdx]);
+        ++rightIdx;
+    }
+
+    // Copy merged arrays back
+    for (int i = 0; i < (int)sortedValues.size(); ++i) {
+        values[left + i] = sortedValues[i];
+        weights[left + i] = sortedWeights[i];
+    }
+
+    return weightedInversions;
+}
+
+long long countWeightedInversions(vector<int>& values, vector<int>& weights,
+                                   int left, int right) {
+    if (left >= right) return 0;
+
+    int mid = left + (right - left) / 2;
+    long long leftInversions = countWeightedInversions(values, weights, left, mid);
+    long long rightInversions = countWeightedInversions(values, weights, mid + 1, right);
+    long long crossInversions = mergeWeightedInversions(values, weights, left, mid, right);
+
+    return leftInversions + rightInversions + crossInversions;
+}
+
+// Main function
+long long totalWeightedInversions(vector<int>& A, vector<int>& W) {
+    return countWeightedInversions(A, W, 0, (int)A.size() - 1);
+}
+```
+
+### Complexity Analysis
+
+**Recurrence**: `T(n) = 2T(n/2) + O(n)`
+
+- **Divide**: Split into two halves → O(1)
+- **Conquer**: Recursively solve left and right → `2T(n/2)`
+- **Combine**: Merge step processes each element once → O(n)
+
+**Solution**: By Master Theorem (Case 2, since `f(n) = Θ(n)` and `log_b(a) = log_2(2) = 1`):
+- `T(n) = Θ(n log n)`
+
+**Space Complexity**: O(n) for temporary arrays during merge, O(log n) for recursion stack.
+
+**Time Complexity**: O(n log n) — optimal for comparison-based inversion counting.
 

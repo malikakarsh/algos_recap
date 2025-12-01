@@ -136,6 +136,10 @@ void sortColors(vector<int>& nums) {
 
 - [Remove Duplicates From Sorted Array II](https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii)
 
+- [Merge Intervals](https://leetcode.com/problems/merge-intervals/)
+
+- [Merge Two Sorted Arrays](https://www.geeksforgeeks.org/problems/merge-two-sorted-arrays-1587115620/1)
+
 ```CPP
 int removeDuplicates(vector<int>& nums) {
         int n = nums.size();

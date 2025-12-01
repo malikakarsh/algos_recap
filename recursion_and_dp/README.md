@@ -448,6 +448,7 @@ int factorial(int n, int depth = 0) {
 **Key Insight**: Recursion trades **space** (call stack) for **code simplicity** and **problem decomposition**.
 
 ### Practice Problems:
+- [Letter Combinations Of A Phone Number](https://leetcode.com/problems/letter-combinations-of-a-phone-number)
 - [Combination Sum](https://leetcode.com/problems/combination-sum/)
 - [Subsets](https://leetcode.com/problems/subsets/)
 - [Subsets II](https://leetcode.com/problems/subsets-ii)
@@ -626,3 +627,71 @@ Notes:
 - [House Robber](https://leetcode.com/problems/house-robber/)
 - [House Robber II](https://leetcode.com/problems/house-robber-ii/)
 - [House Robber III](https://leetcode.com/problems/house-robber-iii/description/)
+
+## Digit DP
+
+### What is Digit DP?
+Digit DP is a technique for counting numbers in a range `[0, n]` that satisfy certain digit-based constraints. Instead of iterating through all numbers (which is exponential), we build the number digit-by-digit from left to right, using memoization to avoid recomputing equivalent states.
+
+### Key Concept: The "Tight" Parameter
+The `tight` (or `isLimit`) flag indicates whether the digits chosen so far match the corresponding prefix of the upper bound `n`:
+- `tight = true`: The current prefix equals the prefix of `n` at this position, so future digits are constrained by `n`'s remaining digits.
+- `tight = false`: The current prefix is already smaller than `n`'s prefix, so future digits can be any valid digit (0-9 for decimal, 0-1 for binary).
+
+**Why it matters**: When `tight = false`, we can reuse memoized results because all remaining choices are independent of the specific prefix chosen. This dramatically reduces the state space from exponential to polynomial.
+
+### Example: Count Binary Numbers Without Consecutive Ones
+Given `n`, count numbers in `[0, n]` whose binary representation has no consecutive 1s.
+
+```cpp
+class Solution {
+public:
+    int dp[32][2][2];
+
+    int solve(vector<int>& digits, int idx, bool last_bit, bool tight) {
+        if (idx == (int)digits.size()) return 1;
+
+        if (dp[idx][tight][last_bit] != -1)
+            return dp[idx][tight][last_bit];
+
+        int limit = (tight == true) ? digits[idx] : 1;
+        int result = 0;
+
+        for (int current_bit = 0; current_bit <= limit; ++current_bit) {
+            if (last_bit == 1 && current_bit == 1) continue;  // skip consecutive 1s
+
+            bool new_tight = (tight && (current_bit == limit));
+            result += solve(digits, idx + 1, current_bit, new_tight);
+        }
+
+        return dp[idx][tight][last_bit] = result;
+    }
+
+    int findIntegers(int n) {
+        int num_digits = (int)log2(n) + 1;
+        vector<int> digits(num_digits, 0);
+        for (int i = 0; i < num_digits; ++i) {
+            int mask = 1 << (num_digits - i - 1);
+            if (mask & n) digits[i] = 1;
+        }
+        memset(dp, -1, sizeof(dp));
+        return solve(digits, 0, 0, 1);
+    }
+};
+```
+
+**Explanation**:
+- `digits`: Binary representation of `n` (MSB first)
+- `idx`: Current position being processed
+- `last_bit`: The bit chosen at position `idx-1` (to enforce no consecutive 1s)
+- `tight`: Whether the prefix built so far matches `n`'s prefix
+- `limit`: Maximum digit allowed at this position (1 if tight, 1 if not tight for binary)
+- `new_tight`: Remains tight only if we were tight AND chose the maximum allowed digit
+
+**Time Complexity**: O(log n × 2 × 2) = O(log n) states, each computed once  
+**Space Complexity**: O(log n) for recursion stack and memoization
+
+### Practice Problems:
+- [Count Numbers With Unique Digits](https://leetcode.com/problems/count-numbers-with-unique-digits/description/)
+- [Non Negative Integers Without Consecutive Ones](https://leetcode.com/problems/non-negative-integers-without-consecutive-ones/description/)
+- [Number Of Digit One](https://leetcode.com/problems/number-of-digit-one/description/)
