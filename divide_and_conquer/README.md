@@ -257,3 +257,101 @@ long long totalWeightedInversions(vector<int>& A, vector<int>& W) {
 
 **Time Complexity**: O(n log n) — optimal for comparison-based inversion counting.
 
+---
+
+## Weighted Inversion Counting, Variation B (Right Weight)
+
+### Problem Statement
+Same input as before (arrays `A` and `W`), but now the **weight of the second element** `W[j]` is used for each inversion `(i, j)` where `i < j` and `A[i] > A[j]`.
+
+**Goal**: Compute:
+```
+Total Weighted Inversions B = Σ W[j] for all (i,j) where i<j and A[i]>A[j]
+```
+
+### Key Difference
+- **Original**: When `A[i] > A[j]`, we contribute `W[i]` (weight of the left/first element)
+- **Variation B**: When `A[i] > A[j]`, we contribute `W[j]` (weight of the right/second element)
+
+### Algorithm Intuition
+During merge, when we encounter `A[i] > A[j]` (right element is smaller), this right element `A[j]` forms inversions with **all remaining left elements** (from current `i` to `mid`). So we add `W[j] × countOfRemainingLeftElements`.
+
+### Code (C++)
+```cpp
+long long mergeWeightedInversionsRightWeight(vector<int>& values, vector<int>& weights,
+                                               int left, int mid, int right) {
+    vector<int> sortedValues, sortedWeights;
+    sortedValues.reserve(right - left + 1);
+    sortedWeights.reserve(right - left + 1);
+
+    int leftIdx = left, rightIdx = mid + 1;
+    long long weightedInversions = 0;
+
+    while (leftIdx <= mid && rightIdx <= right) {
+        if (values[leftIdx] <= values[rightIdx]) {
+            // Left element goes first: no inversion contribution
+            sortedValues.push_back(values[leftIdx]);
+            sortedWeights.push_back(weights[leftIdx]);
+            ++leftIdx;
+        } else {
+            // Right element is smaller: it forms inversions with all remaining left elements
+            int remainingLeftElements = mid - leftIdx + 1;
+            weightedInversions += (long long)weights[rightIdx] * remainingLeftElements;
+            sortedValues.push_back(values[rightIdx]);
+            sortedWeights.push_back(weights[rightIdx]);
+            ++rightIdx;
+        }
+    }
+
+    // Remaining left elements: no inversions to count (right half already processed)
+    while (leftIdx <= mid) {
+        sortedValues.push_back(values[leftIdx]);
+        sortedWeights.push_back(weights[leftIdx]);
+        ++leftIdx;
+    }
+
+    // Remaining right elements: no inversions to count (left half already processed)
+    while (rightIdx <= right) {
+        sortedValues.push_back(values[rightIdx]);
+        sortedWeights.push_back(weights[rightIdx]);
+        ++rightIdx;
+    }
+
+    // Copy merged arrays back
+    for (int i = 0; i < (int)sortedValues.size(); ++i) {
+        values[left + i] = sortedValues[i];
+        weights[left + i] = sortedWeights[i];
+    }
+
+    return weightedInversions;
+}
+
+long long countWeightedInversionsRightWeight(vector<int>& values, vector<int>& weights,
+                                              int left, int right) {
+    if (left >= right) return 0;
+
+    int mid = left + (right - left) / 2;
+    long long leftInversions = countWeightedInversionsRightWeight(values, weights, left, mid);
+    long long rightInversions = countWeightedInversionsRightWeight(values, weights, mid + 1, right);
+    long long crossInversions = mergeWeightedInversionsRightWeight(values, weights, left, mid, right);
+
+    return leftInversions + rightInversions + crossInversions;
+}
+
+// Main function
+long long totalWeightedInversionsRightWeight(vector<int>& A, vector<int>& W) {
+    return countWeightedInversionsRightWeight(A, W, 0, (int)A.size() - 1);
+}
+```
+
+**Complexity**: Same as original — O(n log n) time, O(n) space.
+
+### Counting Smaller Elements to the Right
+
+This is a very common problem that tests your ability to count based on relative position and value during the merge process, similar to inversions but with a specific output requirement.
+
+Input: An array of integers A of length n.
+
+Goal: For each element A[i], count how many elements A[j] exist such that j>i and A[j]<A[i].
+
+Output: An array C of length n, where C[i] is the count for A[i]. The final answer is the array C.

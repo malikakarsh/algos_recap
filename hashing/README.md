@@ -737,3 +737,4 @@ class GoodHashTable {
 - [Longest Subarry With Sum K](https://www.geeksforgeeks.org/problems/longest-sub-array-with-sum-k0809/1)
 - [Product Of Array Except Self](https://leetcode.com/problems/product-of-array-except-self/)
 - [Construct Product Matrix](https://leetcode.com/problems/construct-product-matrix/)
+- [Minimum Operations To Make Binary Palindrome](https://leetcode.com/problems/minimum-operations-to-make-binary-palindrome/description/)

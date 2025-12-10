@@ -1,5 +1,36 @@
 # Graph Representations: Time and Space Complexity
 
+## Table of Contents
+- [Adjacency Matrix](#adjacency-matrix)
+- [Adjacency List](#adjacency-list)
+- [Directed vs Undirected Graphs](#directed-vs-undirected-graphs)
+- [Graph Traversal Algorithms (DFS, BFS)](#graph-traversal-algorithms)
+- [Cycle Detection in Undirected Graph](#cycle-detection-in-undirected-graph)
+- [Bipartite Graph](#bipartite-graph)
+- [Cycle Detection in Directed Graph](#cycle-detection-in-directed-graph)
+- [Strongly Connected Components (Kosaraju's Algorithm)](#strongly-connected-components-kosarajus-algorithm)
+- [Problem: The "Semi-Connected" Graph](#problem-the-semi-connected-graph)
+- [Problem: The "Mother Vertex"](#problem-the-mother-vertex)
+- [Problem: 2-SAT (2-Satisfiability)](#problem-2-sat-2-satisfiability)
+- [Problem: Finding Bridges via Orientation and SCCs](#problem-finding-bridges-via-orientation-and-sccs)
+- [Finding Bridges (Tarjan's Algorithm)](#finding-bridges-tarjans-algorithm)
+- [Kahn's Algorithm (Topological Sort)](#kahns-algorithm-topological-sort)
+- [Shortest Path in Weighted DAG](#shortest-path-in-weighted-dag)
+- [BFS vs DFS for Shortest Path](#bfs-vs-dfs-for-shortest-path-unit-weights)
+- [Dijkstra's Algorithm](#dijkstras-algorithm-shortest-path-with-weights)
+- [Bellman-Ford Algorithm](#correct-algorithm-for-negative-weights)
+- [Minimum Spanning Tree (MST)](#minimum-spanning-tree-mst)
+  - [Problem: Decreasing the Weight of a Non-Tree Edge](#problem-decreasing-the-weight-of-a-non-tree-edge)
+  - [Problem: Increasing the Weight of a Tree Edge](#problem-increasing-the-weight-of-a-tree-edge)
+  - [Problem: Adding a New Vertex z](#problem-adding-a-new-vertex-z)
+  - [Problem: MST for Extremely Sparse Graph](#problem-mst-for-extremely-sparse-graph-ev3)
+  - [Bottleneck MST: The Decision Problem](#bottleneck-mst-the-decision-problem)
+  - [Bottleneck MST: The Optimization Problem](#bottleneck-mst-the-optimization-problem)
+  - [Problem: The Second Best Minimum Spanning Tree](#problem-the-second-best-minimum-spanning-tree)
+  - [Problem: The Most Vital Edge](#problem-the-most-vital-edge)
+- [Disjoint Set Union (DSU)](#disjoint-set-union-union-find)
+
+
 ## Adjacency Matrix
 
 An adjacency matrix is a 2D array where `matrix[i][j]` indicates whether there's an edge between vertex `i` and vertex `j`.
@@ -281,16 +312,20 @@ bool dfsCheckCycle(vector<vector<int>>& adj, vector<int>& state, int node) {
 
 ## Strongly Connected Components (Kosaraju's Algorithm)
 
-Definition: In a directed graph, a strongly connected component (SCC) is a maximal set of vertices where every vertex is reachable from every other vertex.
+**Definition**: In a directed graph, a **Strongly Connected Component (SCC)** is a maximal set of vertices such that for every pair of vertices `u` and `v` in the set, there is a directed path from `u` to `v` and a directed path from `v` to `u`. Determining these components is crucial for understanding the cyclic structure of a graph.
 
-Key idea (two DFS passes):
-- Pass 1 on original graph: run DFS and push vertices to `order` by finishing time (post-order).
-- Compute transpose graph G^T (reverse all edges).
-- Pass 2 on G^T: process vertices in reverse `order`; each DFS tree yields one SCC.
+**Use of Kosaraju's Algorithm**:
+Kosaraju's algorithm is a classic, efficient (linear time) method to **detect and list all SCCs** in a directed graph.
 
-Why it works: Any edge from an SCC to another goes forward in finish-time order; reversing edges forces DFS to stay inside one SCC when started from the latest-finishing vertex.
+**Algorithm Steps (Two DFS Passes)**:
+1. **First Pass (DFS on G)**: Perform a DFS traversal of the graph. When a recursive DFS call for a vertex finishes (i.e., after visiting all its neighbors), push the vertex onto a stack. This effectively sorts vertices by finishing time.
+2. **Transpose Graph (G^T)**: Create the transpose of the graph by reversing the direction of every edge.
+3. **Second Pass (DFS on G^T)**: Process vertices from the stack (LIFO). If a vertex has not been visited in this second pass, start a new DFS from it on the transpose graph. All vertices reachable in this DFS traversal belong to the same SCC.
 
-Complexity: O(V + E) time, O(V + E) space.
+**Why it works**:
+Topological sorting properties ensure that by processing vertices in decreasing order of finishing times on the transpose graph, we are guaranteed to identify "sink" components first and work our way backwards, isolating each SCC.
+
+**Complexity**: O(V + E) time, O(V + E) space.
 
 ```cpp
 // Kosaraju's algorithm: returns list of SCCs (each SCC is a vector of vertices)
@@ -331,8 +366,282 @@ vector<vector<int>> kosarajuSCC(const vector<vector<int>>& adj) {
 }
 ```
 
-Practice Problem:
-@https://www.geeksforgeeks.org/problems/strongly-connected-components-kosarajus-algo/1
+**Practice Problem**:
+- [Strongly Connected Components (Kosaraju's Algo)](https://www.geeksforgeeks.org/problems/strongly-connected-components-kosarajus-algo/1)
+
+## Problem: The "Semi-Connected" Graph
+
+**Problem Statement**: Given a directed graph $G=(V,E)$, determine if it is semi-connected. A graph is semi-connected if for every pair of vertices $(u,v)$, there is either a path $u \to v$ OR a path $v \to u$.
+
+### The Solution
+
+1. **Condense Graph**: Use Kosaraju's or Tarjan's algorithm to build the Component Graph (DAG) where each node is an SCC.
+2. **Topological Sort**: Get the topological ordering of these components: $C_1, C_2, \dots, C_k$.
+3. **Linear Chain Check**: Verify if the Component Graph forms a Linear Chain (Hamiltonian Path).
+   - Iterate through the sorted components from $i=0$ to $k-2$.
+   - Check if there is a direct edge $C_i \to C_{i+1}$ in the component graph.
+   - If any link is missing, return `False`.
+
+**Result**: If the loop finishes successfully, return `True`.
+
+**Key Insight**: Checking if the "root" reaches everything is insufficient (e.g., a "V" shape graph fails). You must verify that every component reaches the immediately next component in the topological sort to ensure no "branches" exist.
+
+## Problem: The "Mother Vertex"
+
+**Problem Statement**: Given a directed graph $G=(V,E)$, find a Mother Vertex $v$ such that all other vertices in $G$ are reachable from $v$. If none exist, report it.
+
+### The Solution
+
+1. **Find Candidate**: Run a standard DFS (or Kosaraju's first pass) on the whole graph and track the finish times.
+   - The vertex that finishes last (at the top of the stack) is the only possible candidate. Let's call it $v_{cand}$.
+2. **Verify Candidate**: Run a second DFS/BFS starting only from $v_{cand}$.
+3. **Count Nodes**: Count how many unique nodes were visited in this second pass.
+
+**Result**:
+- If count == $V$ (all nodes visited), then $v_{cand}$ is a Mother Vertex.
+- Otherwise, no Mother Vertex exists.
+
+**Key Insight**: A Mother Vertex can only exist in a Source SCC (in-degree 0 in the Component DAG). If there are multiple Source SCCs, no Mother Vertex exists. The "last finished node" logic efficiently identifies a node from a Source SCC without needing to build the full component graph.
+
+## Problem: 2-SAT (2-Satisfiability)
+
+**Problem Statement**: Given a boolean formula in 2-CNF form (clauses with 2 literals, e.g., $x_1 \lor \neg x_2$), determine if there is a valid assignment of True/False to variables such that the formula evaluates to True.
+
+### The Solution
+
+1. **Build Graph**:
+   - **Nodes**: Create two nodes for each variable $x_i$: one for $x_i$ (True) and one for $\neg x_i$ (False). (Total $2N$ nodes).
+   - **Edges**: For every clause $(A \lor B)$, add two directed implication edges:
+     - $\neg A \to B$ ("If not A, then B")
+     - $\neg B \to A$ ("If not B, then A")
+
+2. **Find SCCs**: Run Tarjan's or Kosaraju's to find the SCC ID for every node.
+
+3. **Check for Contradiction**:
+   - Iterate through every variable $x_i$.
+   - Check if `SCC(x_i) == SCC(NOT x_i)`.
+   - If they are in the same component, it implies a logical contradiction ($x_i \leftrightarrow \neg x_i$).
+
+**Result**:
+- If any variable conflicts, return "Unsatisfiable".
+- If no conflicts, return "Satisfiable".
+
+**Key Insight**: The clause $(A \lor B)$ is logically equivalent to the implications $(\neg A \to B)$ and $(\neg B \to A)$. A contradiction occurs only if a variable and its negation force each other (i.e., they end up in the same cycle/SCC).
+
+## Problem: Finding Bridges via Orientation and SCCs
+
+**Problem Description**:
+Let $G = (V, E)$ be a connected undirected graph. An edge $e = \{u, v\}$ is a **bridge** if removing $e$ disconnects $G$. Note that $\{u, v\}$ is a bridge if and only if there is exactly one $u-v$ path in $G$.
+
+Our goal is to design an $O(n + m)$-time algorithm to output all bridges of $G$. The plan is to **orient** the edges of $G$ to obtain a directed graph $\vec{G}$ with the property that every non-bridge edge $xy$ has at least a path $x \leadsto y$ and a path $y \leadsto x$ in $\vec{G}$. Consequently, $x$ and $y$ lie in the same Strongly Connected Component (SCC) in the directed graph, while the endpoints of each bridge lie in **different** SCCs.
+
+**(a) Describe how to orient every undirected edge.**
+**(b) Using the above, give a complete $O(n + m)$-time algorithm to output all bridges.**
+
+### Solution (C++)
+
+The algorithm follows these steps:
+1.  **Orientation**: Perform a DFS on the undirected graph. For every edge $(u, v)$:
+    -   If $v$ is a child of $u$ in the DFS tree, orient $u \to v$.
+    -   If $v$ is an ancestor of $u$ (back edge), orient $u \to v$.
+    -   This ensures all cycles in the undirected graph become strong components in the directed graph.
+2.  **SCC Detection**: Run Kosaraju's Algorithm on the newly oriented graph $\vec{G}$.
+3.  **Bridge Identification**: Any edge $u \to v$ in $\vec{G}$ where $SCC[u] \neq SCC[v]$ corresponds to a bridge in the original graph.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <stack>
+#include <algorithm>
+
+using namespace std;
+
+// Step 1: DFS to orient edges (Build Directed Graph)
+// - Tree edges: u -> v
+// - Back edges: u -> v (u connects back to ancestor v)
+void orientEdgesDFS(const vector<vector<int>>& undirGraph, vector<vector<int>>& directedGraph, 
+                    vector<int>& visited, int src, int parent) {
+    visited[src] = 1; // Mark as visited
+    for (int neighbor : undirGraph[src]) {
+        if (neighbor == parent) continue; // Skip the edge we came from
+        
+        if (visited[neighbor]) {
+            // If already visited, it's a back edge/ancestor.
+            // Note: In undirected DFS, if visited, it must be an ancestor (or processed).
+            // We verify visited[neighbor] == 1 to ensure it's an active ancestor if we want strictly back edges,
+            // but for simple orientation, if it's visited and not parent, we orient u -> v.
+            // Check if edge already added? undirected graph has u-v and v-u.
+            // We only add u->v if we process u first. 
+            // The simple logic: if neighbor visited, orient u->v.
+            // But wait, if v visited u (parent), we skipped.
+            // If v implies a cycle, we orient u->v.
+            // To avoid adding duplicates or reverse edges for tree edges, we check visited.
+            if (visited[neighbor] == 1) { 
+                 directedGraph[src].push_back(neighbor);
+            }
+        } else {
+            // Tree edge
+            directedGraph[src].push_back(neighbor);
+            orientEdgesDFS(undirGraph, directedGraph, visited, neighbor, src);
+        }
+    }
+    visited[src] = 2; // Mark as finished
+}
+
+// Step 2 & 3: Kosaraju's Algorithm Helper - Pass 1 (Fill Stack)
+void kosarajuPass1(const vector<vector<int>>& graph, vector<bool>& visited, stack<int>& order, int u) {
+    visited[u] = true;
+    for (int v : graph[u]) {
+        if (!visited[v]) kosarajuPass1(graph, visited, order, v);
+    }
+    order.push(u);
+}
+
+// Step 2 & 3: Kosaraju's Algorithm Helper - Pass 2 (Find SCCs)
+void kosarajuPass2(const vector<vector<int>>& revGraph, vector<bool>& visited, vector<int>& sccIds, int id, int u) {
+    visited[u] = true;
+    sccIds[u] = id;
+    for (int v : revGraph[u]) {
+        if (!visited[v]) kosarajuPass2(revGraph, visited, sccIds, id, v);
+    }
+}
+
+void findBridges(int V, const vector<vector<int>>& undirGraph) {
+    // 1. Orient Edges
+    // 0: unvisited, 1: visiting, 2: visited
+    vector<vector<int>> directedGraph(V);
+    vector<int> visitedState(V, 0); 
+    orientEdgesDFS(undirGraph, directedGraph, visitedState, 0, -1);
+
+    // 2. Find SCCs on directedGraph
+    //    a. Pass 1: Get finish order
+    stack<int> order;
+    vector<bool> visited(V, false);
+    for (int i = 0; i < V; ++i) {
+        if (!visited[i]) kosarajuPass1(directedGraph, visited, order, i);
+    }
+
+    //    b. Build Transpose Graph
+    vector<vector<int>> revGraph(V);
+    for (int u = 0; u < V; ++u) {
+        for (int v : directedGraph[u]) {
+            revGraph[v].push_back(u);
+        }
+    }
+
+    //    c. Pass 2: Process in reverse finish order
+    fill(visited.begin(), visited.end(), false);
+    vector<int> sccIds(V, -1);
+    int sccCount = 0;
+    while (!order.empty()) {
+        int u = order.top();
+        order.pop();
+        if (!visited[u]) {
+            kosarajuPass2(revGraph, visited, sccIds, sccCount++, u);
+        }
+    }
+
+    // 3. Find Bridges
+    // Iterate over original edges (or directed edges)
+    // If endpoints are in different SCCs, it's a bridge.
+    cout << "Bridges found:\n";
+    for (int u = 0; u < V; ++u) {
+        for (int v : directedGraph[u]) {
+            if (sccIds[u] != sccIds[v]) {
+                cout << u << " -- " << v << "\n";
+            }
+        }
+    }
+}
+
+int main() {
+    int V = 6;
+    vector<vector<int>> undirGraph(V);
+    vector<pair<int, int>> edges = {{0,1}, {1,2}, {2,0}, {2,3}, {3,5}, {5,4}, {4,3}};
+    
+    for (auto& edge : edges) {
+        undirGraph[edge.first].push_back(edge.second);
+        undirGraph[edge.second].push_back(edge.first);
+    }
+
+    findBridges(V, undirGraph);
+    return 0;
+}
+```
+
+## Finding Bridges (Tarjan's Algorithm)
+
+**Concept**:
+Tarjan's bridge-finding algorithm is based on DFS traversal. It uses two arrays:
+1. `tin[u]`: Time of insertion (discovery time) of node `u`.
+2. `low[u]`: Lowest discovery time reachable from `u` (represented by `tin`) in the DFS tree, possibly using a back-edge (an edge to an ancestor).
+
+**Bridge Condition**:
+An edge `u-v` (where `v` is a child of `u` in DFS tree) is a bridge if and only if `low[v] > tin[u]`.
+This means there is no back-edge from `v` or any of its descendants to `u` or any of its ancestors. If `low[v] <= tin[u]`, it implies there's a path from `v` back to `u` or above, forming a cycle, so removing `u-v` wouldn't disconnect the component.
+
+**Complexity**:
+- **Time**: O(V + E) - Standard DFS traversal.
+- **Space**: O(V + E) - Graph storage + recursion stack + arrays.
+
+### Solution (C++)
+
+```cpp
+// Finds all critical connections (bridges) in an undirected graph
+// Time Complexity: O(V + E)
+// Space Complexity: O(V + E)
+class Solution {
+public:
+    int timer;
+    vector<int> tin, low;
+    vector<vector<int>> bridges;
+
+    void dfs(int node, int parent, const vector<vector<int>>& graph) {
+        tin[node] = low[node] = timer++;
+        
+        for (int neighbor : graph[node]) {
+            if (neighbor == parent) continue; // Skip edge to parent
+            
+            if (tin[neighbor] == -1) { // If not visited
+                dfs(neighbor, node, graph);
+                
+                // Update low-link value based on child's low-link
+                low[node] = min(low[node], low[neighbor]);
+                
+                // Bridge condition: if no back-edge from neighbor (or its subtree) to node (or ancestors)
+                if (low[neighbor] > tin[node]) {
+                    bridges.push_back({node, neighbor});
+                }
+            } else {
+                // Back-edge: update low-link based on ancestor's discovery time
+                low[node] = min(low[node], tin[neighbor]);
+            }
+        }
+    }
+
+    vector<vector<int>> findBridges(int n, vector<vector<int>>& connections) {
+        vector<vector<int>> graph(n);
+        for (const auto& conn : connections) {
+            graph[conn[0]].push_back(conn[1]);
+            graph[conn[1]].push_back(conn[0]);
+        }
+        
+        timer = 0;
+        tin.assign(n, -1);
+        low.resize(n);
+        bridges.clear();
+        
+        for (int i = 0; i < n; ++i) {
+            if (tin[i] == -1) {
+                dfs(i, -1, graph);
+            }
+        }
+        return bridges;
+    }
+};
+```
+### Practice Problems:
+- [Critical Connections In A Network](https://leetcode.com/problems/critical-connections-in-a-network/)
 
 ## Kahn's Algorithm (Topological Sort)
 
@@ -655,66 +964,116 @@ vector<int> dijkstraSet(vector<vector<pair<int, int>>>& adj, int src, int V) {
 
 ### Why Dijkstra Fails with Negative Weights?
 
-**Key Issue**: Dijkstra can get stuck in an infinite loop of decreasing distances when negative weights are present.
+**Short Answer**: Dijkstra's algorithm fails if the graph has **any** negative weight edge. It does not need a negative cycle to fail; a single negative edge is enough to produce an incorrect result.
 
-### Simple Example with Negative Weights
+**The Misconception**: 
+Many people think Dijkstra only fails if there is a negative *cycle* (a loop with total negative weight). This is incorrect. 
+- **Negative Cycle**: Causes the algorithm to loop infinitely (or until integer overflow) because it keeps finding "shorter" paths.
+- **Negative Edge (No Cycle)**: Causes the algorithm to return a **wrong answer** (suboptimal path) because it violates the "Greedy Choice Property".
+
+### Why It Fails (The Greedy Flaw)
+
+Dijkstra's algorithm assumes that **once a node is "visited" (processed from the priority queue), its shortest distance is finalized and will never change.**
+
+With non-negative weights, this is true: you can't reach a node, go further, and come back with a shorter total distance because adding positive numbers always increases the total.
+
+**With negative edges, this assumption breaks.** You might reach a node `u`, mark it as revisited, and process its neighbors. Later, you might find a "longer" path to a different node `v` that leads to a negative edge aiming back at `u`, reducing `u`'s distance *after* it was supposed to be finalized. Dijkstra does not account for this.
+
+### Example: Negative Edge (No Cycle) -> Wrong Answer
+
+Consider this directed graph:
+
 ```
-Graph (undirected with negative weight):
-A ----(-1)---- B
-
-Or directed both ways:
-A <--(-1)-- B
-  --(-1)-->
-
-Source: A
+      (2)
+  A ------> B
+  |        /
+(5)|      / (-10)
+  v     v
+  C <-----
 ```
+
+Edges:
+- A -> B (weight 2)
+- A -> C (weight 5)
+- B -> C (weight -10)
+
+**Goal**: Find shortest path from A to C.
+**Correct Answer**: A -> B -> C = 2 + (-10) = -8.
 
 **Dijkstra's Execution**:
+1. **Start**: `dist[A] = 0`, `dist[B] = ∞`, `dist[C] = ∞`. PQ: `[(0, A)]`
+2. **Pop A** (dist 0):
+   - Relax B: `dist[B] = 2`. PQ: `[(2, B)]`
+   - Relax C: `dist[C] = 5`. PQ: `[(2, B), (5, C)]`
+3. **Pop B** (dist 2) **(Greedy Choice)**:
+   - Relax C: `2 + (-10) = -8`. 
+   - Weight is -8. `dist[C]` was 5. New dist is -8. 
+   - **Crucial Step**: In standard Dijkstra (using a `visited` set), if B is processed, we might have successfully updated C. **BUT**, consider a slightly more complex case where the order matters significantly or if we use the "visited" array version.
+
+Let's look at a case where the greedy choice explicitly fails to explore a path because it looks "expensive" initially but becomes cheap later.
+
+**Standard Counter-Example**:
 ```
-Initial: dist[A] = 0, dist[B] = ∞
-
-Step 1: Process A (min distance = 0)
-- Update B: dist[B] = 0 + (-1) = -1
-
-Step 2: Process B (min distance = -1)  
-- Update A: dist[A] = min(0, -1 + (-1)) = min(0, -2) = -2
-- Now A has distance -2, which is less than 0!
-
-Step 3: Process A again (min distance = -2)
-- Update B: dist[B] = min(-1, -2 + (-1)) = min(-1, -3) = -3
-
-Step 4: Process B again (min distance = -3)
-- Update A: dist[A] = min(-2, -3 + (-1)) = min(-2, -4) = -4
-
-This continues infinitely: -2, -3, -4, -5, -6, ...
+       2
+  A --------> B
+  |           |
+  | 5         | -10
+  v           v
+  D <-------- C
 ```
+Path A->D cost 5.
+Path A->B->C->D cost 2 + ?? 
+Actually, the simplest failure is:
+```
+    A
+   / \
+  2   5
+ /     \
+B       C
+ \     /
+ -5   -2
+  \   /
+    D
+```
+The standard example where Dijkstra fails usually involves a node being "finalized" before a better path to it is found using a negative edge.
 
-**The Problem**: 
-- Each time we process a vertex, we can make the other vertex's distance even more negative
-- The distances keep decreasing indefinitely: 0 → -1 → -2 → -3 → -4 → ...
-- Dijkstra never terminates because there's always a "better" (more negative) distance
+**Clear Counter-Example:**
+Graph: Use 3 nodes: Source S, Node A, Node B.
+Edges: S->A (5), S->B (7), A->B (-4).
+Shortest Path S->B: S->A->B = 5 + (-4) = 1.
 
-### Why This Happens
-1. **Dijkstra assumes shortest paths exist**: With negative cycles, there's no "shortest" path
-2. **Priority queue keeps finding "better" distances**: Negative weights create infinitely decreasing distances  
-3. **Algorithm never converges**: The termination condition (all vertices processed) is never met
+**Dijkstra Trace**:
+1. PQ: `[(0, S)]`
+2. Pop S. Neighbors: A(5), B(7).
+   - `dist[A]=5`, `dist[B]=7`.
+   - PQ: `[(5, A), (7, B)]`
+3. **Pop A** (dist 5): 
+   - Relax B: `5 + (-4) = 1`. `dist[B]=1`.
+   - PQ: `[(1, B), (7, B)]` (Duplicate or update depending on impl)
+   
+*Wait, Dijkstra works here?* Yes, the version using Priority Queue often "fixes" this by re-inserting nodes. **However**, the time complexity guarantee is lost (it becomes exponential in worst case) or it fails if we strictly don't re-process "visited" nodes.
 
-### Why This is Problematic
-**Negative cycles make "shortest path" undefined**:
-- In our example, path A→B has cost -1
-- Path A→B→A→B has cost -2  
-- Path A→B→A→B→A→B has cost -3
-- You can always find a "shorter" path by going around the cycle more times
+**Where it REALLY fails (Strict Dijkstra w/ Visited Array)**:
+Many implementations use a `visited` boolean array to never process a node twice to guarantee O(E log V).
+1. S->A(2), S->B(2).
+2. From B, edge to C with weight 1. (Path S-B-C cost 3).
+3. From A, edge to B with weight -2. (Path S-A-B cost 0).
+   
+If we process B first (tie-break), B is marked visited. `dist[B]=2`.
+Later we process A. We find edge A->B (-2). Total to B is 0. 
+If we obey `if (visited[B]) continue;`, we **miss the update**. `dist[B]` remains 2 (Wrong!). 
+Correct `dist[B]` is 0.
 
-**Dijkstra's assumption broken**:
-- Dijkstra assumes that once you find the shortest distance to a vertex, it won't change
-- With negative cycles, distances can always be improved by taking more loops
-- The algorithm never reaches a stable state where all distances are final
+**Conclusion**:
+- Dijkstra with `visited` array: Returns **WRONG ANSWER**.
+- Dijkstra with Priority Queue (no visited check): Might work but has **EXPONENTIAL** time complexity in worst case with negative edges (re-processing nodes many times).
+- **Just use Bellman-Ford**.
 
-### Why This Happens
-1. **Greedy Choice**: Always picks unprocessed vertex with minimum distance
-2. **No Backtracking**: Once processed, a vertex is never reconsidered
-3. **Negative Edges**: Can create better paths through "processed" vertices
+### Infinite Loop (Negative Cycle)
+If the graph acts like:
+A --(-1)--> B --(-1)--> A
+Dijkstra (without visited check) will keep going:
+A(0) -> B(-1) -> A(-2) -> B(-3) -> ... infinitely.
 
 ### Correct Algorithm for Negative Weights
 Use **Bellman-Ford Algorithm** instead:
@@ -909,6 +1268,173 @@ Complexity:
 - DSU operations: ~O(E α(V))
 - Total: O(E log E)
 
+### Problem: Decreasing the Weight of a Non-Tree Edge
+
+**Scenario**: You have an MST $T$. An edge $(u,v)$ that was not in $T$ gets a smaller weight. **Goal**: Find the new MST in $O(V+E)$ time.
+
+**Algorithm (Cycle Property)**:
+
+1. **Identify the Cycle**: Since $(u,v)$ is not in $T$, adding it to $T$ creates exactly one cycle. Use DFS or BFS on $T$ to find the unique path between $u$ and $v$.
+2. **Find Max Edge**: Traverse this path and identify the edge with the maximum weight. Let's call it $e_{max}$.
+3. **Compare & Swap**:
+   - If $w_{new}(u,v) < w(e_{max})$, then $(u,v)$ offers a cheaper way to connect the components than $e_{max}$.
+   - **Action**: Remove $e_{max}$ from $T$ and add $(u,v)$.
+   - If $w_{new}(u,v) \ge w(e_{max})$, do nothing. The old $T$ is still the MST.
+
+### Problem: Increasing the Weight of a Tree Edge
+
+**Scenario**: You have an MST $T$. An edge $(x,y)$ that is in $T$ gets a larger weight. **Goal**: Find the new MST in $O(V+E)$ time.
+
+**Algorithm (Cut Property)**:
+
+1. **Remove the Edge**: Temporarily delete $(x,y)$ from $T$. This splits the tree into two disconnected components, $C_x$ and $C_y$.
+2. **Identify Components**: Run a DFS or BFS starting from $x$ (using only tree edges) to mark all nodes in $C_x$. All other nodes are in $C_y$.
+3. **Find Min Crossing Edge**: Iterate through all edges in the original graph $G$.
+   - Look for edges $(u,v)$ where $u \in C_x$ and $v \in C_y$.
+   - Find the one with the minimum weight (this could be the original $(x,y)$ with its new weight, or a different edge).
+4. **Reconnect**: Add this minimum crossing edge to the tree to reconnect $C_x$ and $C_y$.
+
+### Problem: Adding a New Vertex z
+
+**Scenario**: You have an MST $T$. A new vertex $z$ is added with $k$ edges connecting it to the existing graph. **Goal**: Update the MST in $O(V)$ time (assuming $k \le V$).
+
+**Algorithm (Anchor & Cycle Optimization)**:
+
+1. **Anchor**: Find the minimum weight edge among the $k$ new edges connecting $z$ to the tree. Let's say it connects to $u_{min}$. Add $(z,u_{min})$ to the MST.
+2. **Root the Tree**: Treat $u_{min}$ as the root of the tree. Run a DFS to establish parent pointers and calculate $Max[v]$ for every node $v$.
+   - $Max[v]$ stores the weight of the heaviest edge on the unique path from $v$ up to the root $u_{min}$.
+   - **Formula**: $Max[v] = \max(\text{weight}(v, \text{parent}), Max[\text{parent}])$.
+3. **Competition**: Iterate through the remaining $k-1$ new edges. For a new edge $(z,v)$ with weight $w$:
+   - Check if $w < Max[v]$.
+   - If yes, it means the new edge $(z,v)$ is cheaper than the bottleneck on the old path. Swap them: Remove the edge corresponding to $Max[v]$ and add $(z,v)$.
+   - **Note**: If multiple new edges try to replace the same old edge, pick the one that offers the greatest savings.
+
+### Problem: MST for Extremely Sparse Graph (E <= V+3)
+
+**Scenario**: The graph is connected and has very few edges (at most $n+3$ edges). **Goal**: Find the MST in $O(n)$ time.
+
+**Algorithm (Iterative Cycle Breaking)**:
+
+1. **Cycle Detection**: Run a DFS on the graph. Since $E \ge V$ (it's connected and has cycles), you will inevitably encounter a "back edge" (an edge to an already visited ancestor).
+2. **Identify Heaviest Edge**: Trace the path from the current node back to the ancestor to identify the cycle. Find the edge with the maximum weight in this cycle.
+3. **Remove**: Delete this maximum weight edge. This breaks one cycle but keeps the graph connected.
+4. **Repeat**: Continue the DFS or restart it. Since there are at most $V+3$ edges and a tree has $V-1$ edges, you have at most 4 "extra" edges. You will perform this cycle-breaking step at most 4 times.
+
+**Result**: When no cycles remain (edge count is $V-1$), the remaining edges form the MST.
+
+### Bottleneck MST: The Decision Problem
+
+**Problem Statement**: Give an $O(E)$-time algorithm that, given an input graph $G$ and real value $r$, determines whether the bottleneck value of $G$ is at most $r$. (i.e., Can we form a spanning tree using only edges with weight $\le r$?)
+
+**Solution Algorithm**: The problem is equivalent to determining if the graph remains connected after removing all edges with weight strictly greater than $r$.
+
+1. **Implicit Graph Filter**: Consider a subgraph $G' = (V, E')$ where $E'$ contains only edges $(u,v)$ such that $w(u,v) \le r$. You do not need to construct this graph explicitly; you can filter edges on the fly.
+2. **Traversal (BFS or DFS)**:
+   - Initialize a boolean `visited` array of size $V$ to `false`.
+   - Start a BFS or DFS from an arbitrary node (e.g., node 0). Mark it as visited.
+   - **Crucial Step**: During traversal, when examining neighbors of a node $u$, strictly ignore any edge $(u,v)$ if its weight is $> r$. Only add $v$ to the queue/stack if the edge weight is $\le r$.
+   - Count the total number of unique nodes visited.
+3. **Connectivity Check**:
+   - If `count_visited == V`, the graph is connected using valid edges. Return `True`.
+   - Otherwise, return `False`.
+
+**Time Complexity**:
+- The traversal visits each vertex at most once and checks each edge at most once (or twice for undirected).
+- Since we visit at most $V$ nodes and $E$ edges, the complexity is $O(V+E)$.
+- Since the input graph $G$ is connected, $E \ge V-1$, so this simplifies to $O(E)$.
+
+### Bottleneck MST: The Optimization Problem
+
+**Problem Statement**: Suppose that each edge has a distinct integer weight in the range $1, 2, \dots, |E|$. Use your algorithm from Part 1 as a black-box subroutine to find the minimum bottleneck value of $G$ in $O(E \log E)$ time.
+
+**Solution Algorithm**: We use Binary Search on the possible answer space (the edge weights).
+
+1. **Initialize Search Range**:
+   - Set `low = 1` (Smallest possible weight).
+   - Set `high = |E|` (Largest possible weight).
+   - Set `ans = |E|` (To store the best feasible bottleneck found so far).
+
+2. **Binary Search Loop**:
+   - While `low <= high`:
+     - Calculate `mid = (low + high) / 2`.
+     - **Call Subroutine**: Run the algorithm from Part 1 with `r = mid`.
+     - `check = isBottleneckAtMostR(G, mid)`
+     - **Evaluate**:
+       - If `check` is `True`: It means we can connect the graph using edges $\le mid$. This is a valid bottleneck. Record it (`ans = mid`) and try to find a smaller one by moving left: `high = mid - 1`.
+       - If `check` is `False`: It means the graph is disconnected if we limit weights to `mid`. We need heavier edges. Move right: `low = mid + 1`.
+
+3. **Output**:
+   - Return `ans`. This is the minimum weight $r$ such that the graph is connected.
+
+**Time Complexity**:
+- The binary search range is size $E$, so the loop runs $O(\log E)$ times.
+- Inside each iteration, we run the Part 1 algorithm which takes $O(E)$.
+- **Total Complexity**: $O(\log E) \times O(E) = O(E \log E)$.
+
+
+
+### Problem: The Second Best Minimum Spanning Tree
+
+**Problem Statement**: Given a connected, undirected graph $G=(V,E)$ with distinct edge weights, let $T$ be the unique Minimum Spanning Tree (MST) of $G$. A "spanning tree" is a subset of edges that connects all vertices with no cycles. Find the Second Best Minimum Spanning Tree.
+
+**Definition**: Among all spanning trees of $G$ that are not equal to $T$, find the one with the minimum total edge weight.
+
+**Solution Algorithm**: This problem relies on the Cycle Property. The Second Best MST differs from the optimal MST by exactly one edge swap.
+
+1. **Compute the Best MST**: Run Kruskal’s or Prim’s algorithm to find the optimal MST, let's call it $T$. Calculate its total weight, $W_{MST}$.
+2. **Identify Candidates**: Identify all edges in the graph that are not in $T$. Let this set be $E_{non} = E \setminus T$.
+3. **Calculate Swap Penalties**: For every edge $e_{new} = (u,v)$ in $E_{non}$:
+   - Hypothetically add $e_{new}$ to $T$. This creates exactly one cycle.
+   - Traverse this cycle (using DFS/BFS on $T$) to find the edge $e_{max}$ with the maximum weight on the path between $u$ and $v$.
+   - **Calculate the "cost penalty"** of swapping $e_{max}$ for $e_{new}$:
+     - $\Delta = \text{weight}(e_{new}) - \text{weight}(e_{max})$
+4. **Select the Best Swap**:
+   - Find the edge $e_{new}$ that yields the minimum positive $\Delta$.
+   - The total weight of the Second Best MST is $W_{MST} + \Delta_{min}$.
+   - The edges of the Second Best MST are $(T \setminus \{e_{max}\}) \cup \{e_{new}\}$.
+
+**Time Complexity**:
+- **Naive Approach**: $O(E \cdot V)$.
+  - There are $O(E)$ non-tree edges.
+  - For each edge, the DFS to find the cycle's max edge takes $O(V)$.
+  - For dense graphs ($E \approx V^2$), this is $O(V^3)$.
+- **Optimized Approach**: $O(E \log V)$ if using Lowest Common Ancestor (LCA) techniques to query the max edge on the path in $O(\log V)$.
+
+### Problem: The Most Vital Edge
+
+**Problem Statement**: Given a connected, undirected, weighted graph $G=(V,E)$ and its Minimum Spanning Tree $T$. The Vitality of an edge $e \in T$ is defined as the increase in the weight of the MST if edge $e$ is prohibited from use.
+
+$$Vitality(e) = W(MST_{G \setminus \{e\}}) - W(T)$$
+
+If removing $e$ disconnects the graph, $Vitality(e) = \infty$. Find the edge $e^* \in T$ that has the maximum vitality.
+
+**Solution Algorithm (Simulation Method)**:
+
+1. **Iterate MST Edges**: Loop through every edge $e_{target} = (u,v)$ that belongs to the MST $T$.
+2. **Simulate Removal**:
+   - Temporarily "delete" $e_{target}$ from the graph (or mark it as invalid).
+   - This splits the tree $T$ into two disconnected components, let's call them set $S_u$ and set $S_v$.
+   - **Implementation Hint**: You can identify these sets quickly using BFS/DFS starting from $u$ and $v$ without crossing the deleted edge.
+3. **Find Minimum Replacement**:
+   - Initialize `min_replacement_weight =` $\infty$.
+   - Iterate through all non-tree edges $(x,y)$ in the original graph.
+   - **Check if the edge crosses the cut**: Is $x \in S_u$ and $y \in S_v$? (or vice versa).
+   - If it crosses, update: `min_replacement_weight = min(min_replacement_weight, weight(x, y))`.
+4. **Calculate Vitality**:
+   - If `min_replacement_weight` is still $\infty$, then $e_{target}$ is a Bridge. Return $e_{target}$ immediately as the Most Vital Edge.
+   - Otherwise, calculate `current_vitality = min_replacement_weight - weight(e_target)`.
+5. **Track Maximum**:
+   - Compare `current_vitality` with the global maximum found so far. Update if higher.
+   - Restore $e_{target}$ and proceed to the next edge.
+
+**Time Complexity**:
+- **Loop**: Runs $V-1$ times (once for each MST edge).
+- **Inside Loop**:
+  - Component identification (DFS/BFS): $O(V)$.
+  - Scanning non-tree edges: $O(E)$.
+- **Total**: $O(V \cdot (V+E)) \approx O(V \cdot E)$.
+- For dense graphs, this is $O(V^3)$. This is the standard acceptable complexity for this problem.
+
 ## Disjoint Set Union (Union-Find)
 
 Maintains a partition of elements into disjoint sets with near O(1) amortized operations.
@@ -988,3 +1514,4 @@ Notes:
 - [Redundant Connection](https://leetcode.com/problems/redundant-connection/)
 - [Count The Number Of Complete Components](https://leetcode.com/problems/count-the-number-of-complete-components)
 - [Path With Maximum Probability](https://leetcode.com/problems/path-with-maximum-probability/)
+- [Accounts Merge](https://leetcode.com/problems/accounts-merge/description/)
