@@ -447,3 +447,19 @@ bool operator<(const Task& other) const {
 ```
 
 **Memory Tip**: "The comparator tells priority queue when to put the **other** element **above** the current one in the heap tree."
+
+## Bitset for Efficient Boolean Storage
+
+### #include <bitset>
+
+When you need to track presence or visited states, `std::bitset` is more space-efficient than `int` or `bool` arrays.
+
+```cpp
+#include <bitset>
+bitset<3005> used; // Each index takes only 1 bit instead of 32 bits
+// ... same logic as your frequency array
+```
+
+### Efficiency
+- **Space**: `bitset<N>` takes `ceil(N/8)` bytes.
+- **Comparison**: 32x smaller than an `int` array.

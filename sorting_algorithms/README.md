@@ -118,3 +118,4 @@ int findUnsortedSubarray(vector<int>& nums) {
     }
 ```
 - [Shortest Unsorted Continous Subarray](https://leetcode.com/problems/shortest-unsorted-continuous-subarray/)
+- [Splitting Items](https://codeforces.com/problemset/problem/2004/C)

@@ -47,6 +47,10 @@ int addDigitsIterative(int num) {
 - [Add Digits](https://leetcode.com/problems/add-digits/)
 - [Alternating Digit Sum](https://leetcode.com/problems/alternating-digit-sum/)
 - [Average Value Of Even Numbers That Are Divisible By Three](https://leetcode.com/problems/average-value-of-even-numbers-that-are-divisible-by-three/description/)
+- [Maximum Matrix Sum](https://leetcode.com/problems/maximum-matrix-sum/)
+- [Minimum Time Visiting All Points](https://leetcode.com/problems/minimum-time-visiting-all-points/description/)
+- [Hourglass](https://codeforces.com/contest/2184/problem/B)
+- [Accomodation](https://www.codechef.com/problems/ACMDT)
 
 ---
 
@@ -102,5 +106,194 @@ for (char c : num) {
 ### Practice Problems:
 - [Binary Prefix Divisible By 5](https://leetcode.com/problems/binary-prefix-divisible-by-5/)
 - [Smallest Integet Divisible By K](https://leetcode.com/problems/smallest-integer-divisible-by-k/)
+- [Smallest All-ones Multiple](https://leetcode.com/problems/smallest-all-ones-multiple/)
+- [Adding Digits](https://codeforces.com/problemset/problem/260/A)
+- [Jzzhu and Sequences](https://codeforces.com/problemset/problem/450/B)
+- [Sereja and Bottles](https://codeforces.com/problemset/problem/315/A)
+- [Building Permutation](https://codeforces.com/problemset/problem/285/C)
+- [Kitahara Haruki's Gift](https://codeforces.com/problemset/problem/433/A)
+- [Maximize Area of Square Hole in Grid](https://leetcode.com/problems/maximize-area-of-square-hole-in-grid/)
+- [Maximum Square Area by Removing Fences from a Field](https://leetcode.com/problems/maximum-square-area-by-removing-fences-from-a-field/)
+- [Find the largest area of square inside two rectangles](https://leetcode.com/problems/find-the-largest-area-of-square-inside-two-rectangles/)
+- [Rectangle Area](https://leetcode.com/problems/rectangle-area/description/)
+- [Raising Bacteria](https://codeforces.com/problemset/problem/579/A)
+- [Balanced Array](https://codeforces.com/problemset/status?my=on)
+-[Superultra's Favorite Permutation](https://codeforces.com/problemset/problem/2037/C)
+- [Minimize Maximum Pair Sum In Array](https://leetcode.com/problems/minimize-maximum-pair-sum-in-array/)
+- [Bestie](https://codeforces.com/problemset/problem/1732/A)
+- [Ping Pong](https://codeforces.com/problemset/problem/1455/C)
+- [A TRUE Battle](https://codeforces.com/problemset/problem/2030/C)
+- [Jumps](https://codeforces.com/contest/1455/problem/B)
+
+## Parity Problems (Identify the parity)
+- [Buttons](https://codeforces.com/contest/1858/problem/A)
+- [Domino](https://codeforces.com/problemset/problem/353/A)
+- [Little Girl and Game](https://codeforces.com/problemset/problem/276/B)
+- [Even Modulo Pair](https://codeforces.com/problemset/problem/2164/B)
+- [Renako Amaori and XOR Game](https://codeforces.com/problemset/problem/2171/C1)
+
+### Identify the Pattern
+```CPP
+int clumsy(int n) {
+        if (n == 1) return 1;
+        if (n == 2) return 2;
+        if (n == 3) return 6;
+        if (n == 4) return 7;
+        if (n%4 == 0) return n+1;
+        if (n%4 == 1 || n%4 == 2) return n+2;
+        return n-1;
+    }
+```
+- [Clumsy Factorial](https://leetcode.com/problems/clumsy-factorial/description/)
+- [Count Good Triplets in an Array](https://leetcode.com/problems/count-good-triplets-in-an-array/)
+- [Binary Array Game](https://codeforces.com/problemset/problem/2183/A)
+- [Apples In Boxes](https://codeforces.com/problemset/problem/2107/B)
+- [Removal Games](https://codeforces.com/problemset/problem/2002/B)
+- [Circle Game](https://codeforces.com/problemset/problem/1695/B)
+- [Minimum Operations To Make Array Equal](https://leetcode.com/problems/minimum-operations-to-make-array-equal/description/)
+- [Minimum Number Of Operations To Make All Array Elements Equal To 1](https://leetcode.com/problems/minimum-number-of-operations-to-make-all-array-elements-equal-to-1/description/)
+
+# Pigeonhole Principle
+
+The Pigeonhole Principle states that if $n$ items are put into $m$ containers, with $n > m$, then at least one container must contain more than one item.
+
+## Guaranteeing k items
+
+If you want to guarantee at least $k$ items in one bucket, and you have $n$ buckets, the number of items you need is:
+
+$$ Items = n(k-1) + 1 $$
+
+## Examples
+
+### 1. The Birth Month Problem
+**Problem:** There are 12 months in a year (our "holes"). How many people do you need in a room to guarantee that at least 3 of them were born in the same month?
+
+**Solution:**
+Here, $n = 12$ (months) and $k = 3$ (people in same month).
+$$ Items = 12(3-1) + 1 = 12(2) + 1 = 25 $$
+You need **25 people**.
+
+### 2. The Sock Drawer Problem
+**Problem:** You have a drawer full of loose socks: 10 blue socks and 10 black socks. The room is pitch black, and you can't see the colors. How many socks must you grab to be sure you have a matching pair?
+
+**Solution:**
+Here, the "holes" are the colors, so $n = 2$ (Blue, Black). We want a pair, so $k = 2$.
+$$ Items = 2(2-1) + 1 = 3 $$
+You need to pick **3 socks**.
+
+### 3. The Card Sum Problem
+**Problem:** You have cards numbered 1 through 12. How many cards must you pick to guarantee a pair that sums to 13?
+
+**Solution:**
+First, identify the "holes". The holes are the pairs that sum to 13:
+$\{1, 12\}, \{2, 11\}, \{3, 10\}, \{4, 9\}, \{5, 8\}, \{6, 7\}$.
+There are $n = 6$ such pairs.
+We want to guarantee that we have selected both items from at least one pair. This is a slightly different application. If we pick $n+1$ items, by Pigeonhole Principle, at least two items must belong to the same pair (hole).
+Since each "hole" only contains 2 specific cards, finding 2 items in the same hole means we found the pair.
+$$ Items = 6(2-1) + 1 = 7 $$
+You need to pick **7 cards**.
+
+### Practice Problems:
+- [N-Repeated Element in Size 2N Array](https://leetcode.com/problems/n-repeated-element-in-size-2n-array/)
 
 
+# Prime Checking (6k ± 1 Optimization)
+
+This method allows checking if a number `n` is prime much faster than the naive $O(\sqrt{n})$ loop that increments by 1 or 2.
+
+**Key Insight:** All integers can be expressed as $(6k + i)$, where $i \in \{0, 1, 2, 3, 4, 5\}$.
+- $6k + 0, 6k + 2, 6k + 4$ are divisible by 2.
+- $6k + 3$ is divisible by 3.
+- Thus, all primes greater than 3 must be of the form $6k + 1$ or $6k + 5$ (which is $6k - 1$).
+
+**Why it is faster:**
+- We only check potential divisors of the form $6k \pm 1$ ($5, 7, 11, 13, \dots$).
+- This reduces the number of trial divisions by a factor of 3 compared to checking all numbers, or effectively better than just checking odd numbers.
+
+**Code:**
+```cpp
+// Using long long and the 6k+1 optimization for robustness
+bool isPrime(long long n) {
+    if (n < 2) return false;
+    if (n == 2 || n == 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    // We check i and i+2, incrementing by 6
+    for (long long i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return false;
+    }
+    return true;
+}
+```
+### Practice Problems:
+- [Simple Repetition](https://codeforces.com/problemset/problem/2093/C)
+- [Minimum LCM](https://codeforces.com/problemset/problem/1765/M)
+- [Yet Another Array Problem](https://codeforces.com/problemset/problem/2167/D)
+
+# Numbers with Exactly 4 Divisors
+
+A number $n$ has exactly 4 divisors if and only if it falls into one of two cases:
+
+1. **$n$ is the product of two distinct primes ($p \times q$)**
+   - The divisors are: $\{1, p, q, p \times q\}$
+   - Example: $6 = 2 \times 3$, divisors are $\{1, 2, 3, 6\}$.
+   - Example: $10 = 2 \times 5$, divisors are $\{1, 2, 5, 10\}$.
+
+2. **$n$ is the cube of a prime ($p^3$)**
+   - The divisors are: $\{1, p, p^2, p^3\}$
+   - Example: $8 = 2^3$, divisors are $\{1, 2, 4, 8\}$.
+   - Example: $27 = 3^3$, divisors are $\{1, 3, 9, 27\}$.
+
+### Practice Problems:
+- [Four Divisors](https://leetcode.com/problems/four-divisors/)
+- [T-Primes](https://codeforces.com/problemset/problem/230/B)
+
+# GCD and LCM Relation
+
+For any two positive integers $a$ and $b$, there is a fundamental relationship between their Greatest Common Divisor (GCD) and Least Common Multiple (LCM):
+
+$$ \gcd(a, b) \times \text{lcm}(a, b) = |a \cdot b| $$
+
+This allows us to compute the LCM efficiently using the GCD:
+
+$$ \text{lcm}(a, b) = \frac{|a \cdot b|}{\gcd(a, b)} $$
+
+To avoid potential overflow when computing $a \cdot b$, it is safer to compute it as:
+`lcm(a, b) = (a / gcd(a, b)) * b`
+
+**C++ Note:**
+- `std::gcd(a, b)` and `std::lcm(a, b)` are available in the `<numeric>` header (C++17).
+
+### Practice Problems:
+- [Yet Another Permutation Problem](https://codeforces.com/problemset/problem/1858/C)
+- [String LCM](https://codeforces.com/problemset/problem/1473/B)
+
+# Bézout's Identity
+
+**Bézout's Identity** states that for any integers $a$ and $b$ (not both zero), there exist integers $x$ and $y$ such that:
+
+$$ ax + by = \gcd(a, b) $$
+
+- The equation $ax + by = k$ has integer solutions $(x, y)$ if and only if $k$ is a multiple of $\gcd(a, b)$.
+- **Note:** The integers $x$ and $y$ can be **negative**. If there is a constraint that $x$ and $y$ must be positive (or non-negative), then this guarantee does not hold.
+- These coefficients $(x, y)$ can be found using the **Extended Euclidean Algorithm**.
+
+# Frobenius Coin Problem (Chicken McNugget Theorem)
+
+The **Frobenius Coin Problem** asks for the largest monetary amount that **cannot** be obtained using only coins of specified denominations. For two denominations $a$ and $b$ that are **relatively prime** (or **coprime**):
+
+> **Definition:** Two numbers are **relatively prime** (or **coprime**) if their Greatest Common Divisor (GCD) is 1 (e.g., $\gcd(a, b) = 1$).
+
+1. **Largest Impossible Amount (Frobenius Number):**
+   $$ g(a, b) = ab - a - b $$
+
+2. **Number of Impossible Amounts:**
+   $$ N(a, b) = \frac{(a-1)(b-1)}{2} $$
+
+### Example
+For coins of value 3 and 5:
+- Largest Impossible Amount: $3 \times 5 - 3 - 5 = 15 - 8 = 7$.
+- Amounts that cannot be formed: 1, 2, 4, 7. (Total 4, which matches $\frac{(3-1)(5-1)}{2} = \frac{2 \times 4}{2} = 4$).
+
+### Practice Problems:
+- [Social Experiment](https://codeforces.com/contest/2184/problem/A)
+- [Good ol' Numbers Coloring](https://codeforces.com/problemset/problem/1245/A)

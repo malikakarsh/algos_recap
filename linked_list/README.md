@@ -339,7 +339,12 @@ bool hasCycle(ListNode* head) {
     return false;
 }
 ```
-
+### Practice Problems:
+- [Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/)
+- [Linked List Cycle II](https://leetcode.com/problems/linked-list-cycle-ii/)
+- [Find Length of Loop](https://www.geeksforgeeks.org/problems/find-length-of-loop/1)
+- [Palindrome Linked List](https://leetcode.com/problems/palindrome-linked-list/)
+- [Delete the Middle Node of a Linked List](https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/)
 ### **Merge Two Sorted Lists**
 ```cpp
 ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
@@ -443,6 +448,9 @@ ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
 ```
 
 ### Practice Problems:
+- [Reverse Linked List](https://leetcode.com/problems/reverse-linked-list/)
+- [Reverse Linked List II](https://leetcode.com/problems/reverse-linked-list-ii/)
 - [Odd Even Linked List](https://leetcode.com/problems/odd-even-linked-list/description/)
 - [Merge K Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/description/)
 - [Reverse Nodes In K Group](https://leetcode.com/problems/reverse-nodes-in-k-group/description/)
+- [Remove Nth Node From End of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list/)

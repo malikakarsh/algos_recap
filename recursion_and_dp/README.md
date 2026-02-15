@@ -457,6 +457,7 @@ int factorial(int n, int depth = 0) {
 - [Fibonacci Numbers](https://leetcode.com/problems/fibonacci-number)
 - [House Robber](https://leetcode.com/problems/house-robber/)
 - [House Robber II](https://leetcode.com/problems/house-robber-ii/)
+- [House Robber V](https://leetcode.com/problems/house-robber-v/description/)
 - [Geeks Training](https://www.geeksforgeeks.org/problems/geeks-training/1)
 - [Unique Paths](https://leetcode.com/problems/unique-paths/)
 - [Maximum Sum Path In Matrix](https://www.geeksforgeeks.org/problems/path-in-matrix3805/1)
@@ -479,6 +480,7 @@ int factorial(int n, int depth = 0) {
 - [Distinct Subsequences](https://leetcode.com/problems/distinct-subsequences/)
 - [Edit Distance](https://leetcode.com/problems/edit-distance/)
 - [Rod Cutting](https://www.geeksforgeeks.org/problems/rod-cutting0840/1)
+- [Stock Buy and Sell](https://www.codechef.com/problems/ADC)
 - [Best TIme To Buy And Sell Stocks](https://leetcode.com/problems/best-time-to-buy-and-sell-stock)
 - [Best Time To Buy And Sell Stocks II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
 - [Best TIme To Buy And Sell Stock With Cooldown](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/description/)
@@ -488,6 +490,9 @@ int factorial(int n, int depth = 0) {
 - [Profitable Schemes](https://leetcode.com/problems/profitable-schemes/)
 - [Best TIme To Buy And Sell Stock With Transaction Fee](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/description/)
 - [Ones And Zeroes](https://leetcode.com/problems/ones-and-zeroes/)
+- [Cut Ribbon](https://codeforces.com/problemset/problem/189/A)
+- [Trionic Array II](https://leetcode.com/problems/trionic-array-ii/description/)
+- [Champagne Tower](https://leetcode.com/problems/champagne-tower/)
 
 ### Longest Increasing Subsequence
 ```CPP
@@ -550,6 +555,9 @@ int lengthOfLIS(vector<int>& nums) {
 - [Longest String Chain](https://leetcode.com/problems/longest-string-chain/description/)
 - [Longest Bitonic Subsequence](https://www.geeksforgeeks.org/problems/longest-bitonic-subsequence0824/)
 - [Number of Longest Increasing Subsequence](https://leetcode.com/problems/number-of-longest-increasing-subsequence/description/)
+- [Minimum ASCII Delete Sum for Two Strings](https://leetcode.com/problems/minimum-ascii-delete-sum-for-two-strings/)
+- [Minimum Number of Removals to Make Mountain Array](https://leetcode.com/problems/minimum-number-of-removals-to-make-mountain-array/)
+- [Max Dot Product of Two Subsequences](https://leetcode.com/problems/max-dot-product-of-two-subsequences/)
 
 ---
 
@@ -620,6 +628,8 @@ Notes:
 ### Practice Problems:
 - [Matrix Chain Multiplication](https://www.geeksforgeeks.org/problems/matrix-chain-multiplication0303/1)
 - [Minimum Cost To Cut A Stick](https://leetcode.com/problems/minimum-cost-to-cut-a-stick/description/)
+- [Partition Array To Minimize XOR](https://leetcode.com/problems/partition-array-to-minimize-xor/description/)
+- [Split Array Largest Sum](https://leetcode.com/problems/split-array-largest-sum/)
 
 ### **1D DP Problems**
 - [Climbing Stairs](https://leetcode.com/problems/climbing-stairs/description/)

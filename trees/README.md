@@ -60,6 +60,10 @@ TreeNode* buildTreeFromPreIn(const vector<int>& preorder, const vector<int>& ino
 ```
 ### Practice Problems:
 - [Symmetric Tree](https://leetcode.com/problems/symmetric-tree/)
+- [Maximum Level Sum of a Binary Tree](https://leetcode.com/problems/maximum-level-sum-of-a-binary-tree/)
+- [Maximum Product of Splitted Binary Tree](https://leetcode.com/problems/maximum-product-of-splitted-binary-tree/)
+- [Smallest Subtree with all the Deepest Nodes](https://leetcode.com/problems/smallest-subtree-with-all-the-deepest-nodes/)
+- [Balance a Binary Search Tree](https://leetcode.com/problems/balance-a-binary-search-tree/)
 ---
 
 ## Diameter of a Binary Tree

@@ -18,7 +18,11 @@
 - [Shortest Path in Weighted DAG](#shortest-path-in-weighted-dag)
 - [BFS vs DFS for Shortest Path](#bfs-vs-dfs-for-shortest-path-unit-weights)
 - [Dijkstra's Algorithm](#dijkstras-algorithm-shortest-path-with-weights)
+  - [Problem: The Widest Path](#problem-the-widest-path)
+  - [Problem: The Most Reliable Communication Path](#problem-the-most-reliable-communication-path)
+  - [Problem: Shortest Path on a 0/1 Graph](#problem-shortest-path-on-a-01-graph)
 - [Bellman-Ford Algorithm](#correct-algorithm-for-negative-weights)
+  - [Problem: Finding a Negative Cycle](#problem-finding-a-negative-cycle)
 - [Minimum Spanning Tree (MST)](#minimum-spanning-tree-mst)
   - [Problem: Decreasing the Weight of a Non-Tree Edge](#problem-decreasing-the-weight-of-a-non-tree-edge)
   - [Problem: Increasing the Weight of a Tree Edge](#problem-increasing-the-weight-of-a-tree-edge)
@@ -166,6 +170,8 @@ void bfs(vector<vector<int>>& adj, int start) {
 - [Flood Fill](https://leetcode.com/problems/flood-fill/)
 - [Rotting Oranges](https://leetcode.com/problems/rotting-oranges/)
 - [Magic Squares In Grid](https://leetcode.com/problems/magic-squares-in-grid/)
+- [Pythagorean Distance Nodes In A Tree](https://leetcode.com/problems/pythagorean-distance-nodes-in-a-tree/)
+
 
 ## Cycle Detection in Undirected Graph
 
@@ -224,6 +230,7 @@ bool bfsCheckCycle(vector<vector<int>>& adjList, vector<bool>& visited, int star
 - [Surrounded Regions](https://leetcode.com/problems/surrounded-regions/)
 - [Number of Enclaves](https://leetcode.com/problems/number-of-enclaves/)
 - [Number of Distinct Islands](https://www.geeksforgeeks.org/problems/number-of-distinct-islands)
+- [Magic Squares In Grid](https://leetcode.com/problems/magic-squares-in-grid/)
 
 ## Bipartite Graph
 
@@ -947,6 +954,11 @@ vector<int> dijkstraSet(vector<vector<pair<int, int>>>& adj, int src, int V) {
 | Set-based | O((V + E) log V) | O(V) | Good |
 | Simple Queue | O(V² + E) | O(V) | **Worst** |
 
+### Practice Problems:
+- [Minimum Time to Visit Disappearing Nodes](https://leetcode.com/problems/minimum-time-to-visit-disappearing-nodes/)
+- [Cheapest Flights Within K Stops](https://leetcode.com/problems/cheapest-flights-within-k-stops/)
+- [Path With Maximum Probability](https://leetcode.com/problems/path-with-maximum-probability/)
+
 ### Why Priority Queue is Most Efficient?
 
 1. **Optimal Time Complexity**: O((V + E) log V) vs O(V² + E) for simple queue
@@ -1075,6 +1087,179 @@ A --(-1)--> B --(-1)--> A
 Dijkstra (without visited check) will keep going:
 A(0) -> B(-1) -> A(-2) -> B(-3) -> ... infinitely.
 
+### Problem: The Widest Path
+
+**Scenario**: You are given a directed, weighted graph $G=(V,E)$, where the weight $w(u,v)$ of an edge represents the capacity or width of that connection (e.g., the max weight a bridge can support, or bandwidth of a network link). You need to send a single item from a source vertex $s$ to a target vertex $t$.
+
+**Goal**: Find a simple path from $s$ to $t$ such that the minimum edge weight on that path is maximized. Mathematically, we want to find a path $P$ that maximizes:
+
+$$Bottleneck(P) = \min_{e \in P} (w(e))$$
+
+#### Solution 1: Modified Dijkstra (The Greedy Approach)
+
+This is the preferred method for finding the path between a specific pair $(s,t)$ because it can stop early once the target is finalized.
+
+**The Concept**: Just as standard Dijkstra greedily picks the closest node to extend the shortest path, "Widest Path Dijkstra" greedily picks the widest reachable node to extend the highest-capacity path.
+
+**The Algorithm**:
+
+1. **State Initialization**:
+   - Create an array `width[]` to store the maximum bottleneck capacity found so far to each node.
+   - Initialize `width[s] =` $\infty$ (The source has no restriction).
+   - Initialize all other `width[v] = -1` (or 0).
+
+2. **Priority Queue**:
+   - Use a **Max-Heap** (not Min-Heap). We want to process high-capacity paths first.
+   - Push `(infinity, s)` to the queue.
+
+3. **Process Loop**:
+   - While the queue is not empty:
+     - Pop the node `u` with the largest capacity `cap`.
+     - **Early Exit**: If `u == t`, return `cap`.
+     - **Optimization**: If `cap < width[u]`, skip (we found a better way to `u` previously).
+     - **Relax Neighbors**: For each neighbor `v` with edge weight `w`:
+       - Calculate the bottleneck of extending the path to `v`: `new_width = min(cap, w)`
+       - **Check**: Is this path wider than the previous best path to `v`? `if (new_width > width[v])`
+       - **Update**: `width[v] = new_width`. Push `(new_width, v)` to the queue.
+
+**Time Complexity**: $O(E \log V)$. (Same as standard Dijkstra).
+
+#### Solution 2: Maximum Spanning Tree (Kruskal’s Variant)
+
+This method is conceptually simpler and relies on the property that the path between any two nodes in a Maximum Spanning Tree (MaxST) is guaranteed to be the widest possible path.
+
+**The Concept**: If we greedily add the widest edges in the entire graph (checking for cycles), we implicitly connect components with the "strongest" possible links first. The moment $s$ and $t$ become connected, the path formed inside this tree is the optimal bottleneck path.
+
+**The Algorithm**:
+
+1. **Sort Edges**:
+   - Sort all edges $E$ in descending order of their weights.
+
+2. **Initialize DSU (Disjoint Set Union)**:
+   - Create a DSU structure where every node is its own parent.
+
+3. **Iterate Sorted Edges**:
+   - Loop through edges $(u,v)$ with weight $w$ from largest to smallest.
+   - Check `Find(u)` and `Find(v)`.
+   - If they are in different sets:
+     - `Union(u, v)`.
+     - **Check Connectivity**: Immediately check if `(Find(s) == Find(t))`.
+     - If `True`: The current edge weight $w$ is the answer. Stop immediately.
+
+**Why this works**: Since we process edges from largest to smallest, the edge that finally merges the component containing $s$ and the component containing $t$ must be the "smallest" edge on the path formed so far—and thus the bottleneck. Since any alternative path would rely on edges we haven't processed yet (which are even smaller), this must be optimal.
+
+**Time Complexity**: $O(E \log E)$ or $O(E \log V)$ (Dominated by sorting).
+
+### Problem: The Most Reliable Communication Path
+
+**Given**: A directed graph $G=(V,E)$ representing a communication network.
+- For every edge $(u,v) \in E$, there is an associated value $r(u,v)$ where $0 < r(u,v) \le 1$.
+- This value $r(u,v)$ represents the reliability (probability of success) of the channel from $u$ to $v$.
+- The failures of edges are independent events.
+
+The reliability of a path $P = \langle v_0, v_1, \dots, v_k \rangle$ is defined as the product of the reliabilities of its edges:
+$$R(P) = \prod_{i=1}^{k} r(v_{i-1}, v_i)$$
+
+**Goal**: Give an efficient algorithm to find the **Most Reliable Path** (the path with the maximum product of edge reliabilities) between two given vertices $s$ and $t$. You must model this as a Shortest Path Problem by specifying:
+1. The **Graph** structure.
+2. The **Edge Weights**.
+3. The **Algorithm** used.
+
+**The Mathematical Transformation**
+
+Standard shortest path algorithms (like Dijkstra) are designed to minimize the sum of edge weights. Our problem asks to maximize the product of reliabilities. We need to transform the math to fit the tool.
+
+1. **Step 1: Product to Sum (Logarithms)**
+   - We want to maximize the product $P = r_1 \times r_2 \times \dots \times r_k$.
+   - Since the logarithm function is monotonically increasing, maximizing $P$ is equivalent to maximizing $\ln(P)$.
+   $$ \ln(P) = \ln(r_1) + \ln(r_2) + \dots + \ln(r_k) $$
+
+2. **Step 2: Maximize to Minimize (Negation)**
+   - Since $0 < r \le 1$, the logarithm $\ln(r)$ will always be negative (or 0).
+   - Maximizing a sum of negative numbers (e.g., trying to get close to 0) is equivalent to minimizing the sum of their absolute values.
+   - We define the cost as $-\ln(r)$. Since $\ln(r) \le 0$, the value $-\ln(r)$ is always non-negative ($\ge 0$).
+   - This allows us to use standard minimization algorithms.
+
+**The Solution**
+
+1. **The Graph**: Construct a directed graph $G'=(V,E)$ that has the exact same vertices and directed edges as the input graph $G$.
+2. **The Edge Weights**: For every edge $(u,v)$ in the graph with reliability $r(u,v)$, assign a new weight $w(u,v)$ defined as:
+   $$w(u,v) = -\ln(r(u,v))$$
+   (Note: Since $0 < r \le 1$, we are guaranteed that $w \ge 0$.)
+3. **The Algorithm**: Run **Dijkstra’s Algorithm** on $G'$ starting from source $s$.
+
+**Why Dijkstra?**
+- We successfully transformed the problem into finding the path with the minimum sum of weights.
+- Because all transformed weights $w(u,v)$ are non-negative, Dijkstra is the optimal choice.
+- It is more efficient than Bellman-Ford ($O(E \log V)$ vs $O(VE)$).
+
+**Complexity Analysis**
+- **Transformation**: Iterating through all edges to compute logs takes $O(E)$.
+- **Dijkstra**: Running the algorithm using a Min-Priority Queue takes $O(E \log V)$.
+- **Total Time Complexity**: $O(E \log V)$.
+
+**Example Walkthrough**
+- Edge A: $r=1.0$ (Perfect) $\to w = -\ln(1) = 0$.
+- Edge B: $r=0.5$ (Risky) $\to w = -\ln(0.5) \approx 0.69$.
+- Edge C: $r=0.1$ (Bad) $\to w = -\ln(0.1) \approx 2.30$.
+
+Dijkstra will naturally prefer Edge A (Cost 0) over Edge B (Cost 0.69), which corresponds to preferring 100% reliability over 50%. The model works perfectly.
+
+
+
+### Problem: Shortest Path on a 0/1 Graph
+
+**Given**: A directed, weighted graph $G=(V,E)$ where every edge weight $w(u,v)$ is restricted to be either 0 or 1. You are given a source vertex $s$ and a target vertex $t$.
+
+**Goal**: Find the shortest path distance from $s$ to $t$.
+
+**Constraint**: Your algorithm must run in $O(V+E)$ time (Linear Time). (Note: Standard Dijkstra's Algorithm runs in $O(E \log V)$, which is too slow for this constraint.)
+
+**The Solution: 0-1 BFS (Using a Deque)**
+
+To achieve linear time, we cannot use a Priority Queue (which adds a logarithmic factor). Instead, we modify Breadth-First Search (BFS) using a Double-Ended Queue (Deque).
+
+**Key Insight**:
+- Edges with weight 0 represent "free" moves. We want to process these immediately to see how far we can get without increasing the cost.
+- Edges with weight 1 represent "standard" moves. We process these later, maintaining the BFS level structure.
+
+**The Algorithm**:
+
+1. **Initialization**:
+   - Create a distance array `dist[]` initialized to $\infty$. Set `dist[s] = 0`.
+   - Create a Deque (Double-Ended Queue) and push `s` to the front.
+
+2. **Process Loop**:
+   - While the Deque is not empty:
+     - Pop vertex `u` from the **FRONT**.
+     - For each neighbor `v` connected by edge weight `w`:
+       - **Relaxation**: If `dist[u] + w < dist[v]`:
+         - Update `dist[v] = dist[u] + w`.
+         - **The Critical Decision**:
+           - If `w == 0`: Push `v` to the **FRONT** of the Deque.
+           - If `w == 1`: Push `v` to the **BACK** of the Deque.
+
+3. **Output**:
+   - Return `dist[t]`.
+
+**Why it Works (Correctness)**
+
+The Deque maintains a strict monotonic property: at any point in time, the distances of nodes in the Deque will differ by at most 1.
+- The nodes at the front have distance $k$.
+- The nodes at the back have distance $k+1$.
+
+When we process a node with distance $k$:
+- A 0-weight edge keeps the distance at $k$. We push to the Front to extend the current "wave" of exploration.
+- A 1-weight edge increases distance to $k+1$. We push to the Back to process it in the next "wave."
+
+This effectively simulates Dijkstra's logic but uses the simple properties of 0 and 1 to skip the sorting step.
+
+**Complexity Analysis**
+
+- **Time**: Every vertex is pushed and popped from the Deque at most once. Each edge is relaxed once. Operations on a Deque (push front, push back, pop) are $O(1)$.
+  - **Total**: $O(V+E)$.
+- **Space**: $O(V)$ to store distances and the Deque.
+
 ### Correct Algorithm for Negative Weights
 Use **Bellman-Ford Algorithm** instead:
 - Time Complexity: O(VE)
@@ -1149,6 +1334,53 @@ Converted:  0 → 1 (-5) and 1 → 0 (-5)
 Cycle weight = -5 + -5 = -10 < 0 ⇒ negative cycle detected
 ```
 
+### Problem: Finding a Negative Cycle
+
+**Problem Statement**: Given a weighted, directed graph $G=(V,E)$ and a source vertex $s$. The graph contains at least one negative-weight cycle reachable from $s$. **Goal**: Design an efficient algorithm to list the vertices of one such negative-weight cycle.
+
+**Input**: Graph $G$, Source $s$.
+**Output**: A list of vertices $[v_1, v_2, \dots, v_k, v_1]$ forming a cycle where $\sum w(e) < 0$.
+**Constraint**: Time complexity should be $O(V \cdot E)$.
+
+**The Solution Algorithm**
+
+We utilize the Bellman-Ford Algorithm as a "Black Box" subroutine, but we modify how we handle the detection step.
+
+1. **Step 1: Bellman-Ford Relaxation (The Setup)**
+   - Initialize `dist[s] = 0` and all other distances to $\infty$.
+   - Initialize `parent` array to track the path.
+   - Run the standard relaxation loop $V$ times.
+   - **Detection**: In the $V$-th iteration, if you encounter an edge $(u,v)$ that can still be relaxed (i.e., `dist[u] + w < dist[v]`), stop immediately.
+   - Let $v$ be the node that was just updated. Let's call it `detected_node`.
+
+2. **Step 2: The Safety Rewind (The Fix)**
+   - **Problem**: `detected_node` might be on a "tail" downstream from the cycle, not in the cycle itself.
+   - **Action**: Trace the parent pointers backwards exactly $V$ times.
+     - `curr = detected_node`
+     - Loop $V$ times: `curr = parent[curr]`
+   - **Result**: The node `curr` is now guaranteed to be a vertex strictly inside the negative cycle.
+
+3. **Step 3: Cycle Extraction**
+   - Now that we are inside the loop, trace parent pointers one last time to record the cycle.
+   - Initialize list `cycle`.
+   - `start_node = curr`.
+   - **Do-While Loop**:
+     - Add `curr` to `cycle`.
+     - `curr = parent[curr]`
+     - Stop when `curr == start_node`.
+   - The list `cycle` (reversed) is your answer.
+
+**Proof of Correctness: Why Rewind V Times?**
+
+- **The Graph Structure**: The subgraph formed by the parent pointers consists of paths that eventually merge into cycles. This creates a "Rho" ($\rho$) or "Lasso" shape: a linear path (Tail) leading into a loop (Cycle).
+- **The Pigeonhole Principle Proof**:
+  - **The House**: The graph has exactly $V$ unique vertices (rooms).
+  - **The Walk**: When we trace parent pointers back $V$ steps, we visit a sequence of $V+1$ vertices (the starting node + $V$ predecessors).
+  - **The Guarantee**: By the Pigeonhole Principle, since we visited $V+1$ positions but there are only $V$ available vertices, we MUST have visited at least one vertex twice.
+  - **The Conclusion**: Visiting a vertex twice means we have closed a loop.
+  - It is impossible to walk $V$ steps in a straight line (a Tail) because a simple path can have at most $V-1$ edges.
+  - Therefore, by step $V$, we have definitively exhausted the tail and are trapped inside the cycle.
+
 **Practice Problems**:
 
 - [Dijkstra Algorithm](https://www.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix)
@@ -1160,6 +1392,8 @@ Cycle weight = -5 + -5 = -10 < 0 ⇒ negative cycle detected
 - [Minimum Multiplications To Reach End](https://www.geeksforgeeks.org/problems/minimum-multiplications-to-reach-end/1)
 - [Number Of Ways To Arrive At Destination](https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/submissions/1774018133/)
 - [Distance From The Source Bellman Ford Algorithm](https://www.geeksforgeeks.org/problems/distance-from-the-source-bellman-ford-algorithm/1)
+- [Minimum Cost Path With Edge Reversals](https://leetcode.com/problems/minimum-cost-path-with-edge-reversals/)
+- [Minimum Cost To Convert String I](https://leetcode.com/problems/minimum-cost-to-convert-string-i/)
 
 ## Minimum Spanning Tree (MST)
 
@@ -1515,3 +1749,4 @@ Notes:
 - [Count The Number Of Complete Components](https://leetcode.com/problems/count-the-number-of-complete-components)
 - [Path With Maximum Probability](https://leetcode.com/problems/path-with-maximum-probability/)
 - [Accounts Merge](https://leetcode.com/problems/accounts-merge/description/)
+- [Last Day Where You Can Still Cross](https://leetcode.com/problems/last-day-where-you-can-still-cross/)

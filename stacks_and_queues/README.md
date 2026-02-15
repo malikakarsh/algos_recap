@@ -304,7 +304,18 @@ int findUnsortedSubarray(const vector<int>& nums) {
 
 - [Previous Smaller Element](https://www.geeksforgeeks.org/problems/previous-smaller-element/1)
 
+- [Beautiful Towers I](https://leetcode.com/problems/beautiful-towers-i/)
+
+- [Beautiful Towers II](https://leetcode.com/problems/beautiful-towers-ii/)
+
 - [Trapping Rain Water](https://leetcode.com/problems/trapping-rain-water)
 
 - [Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/)
 
+- [Maximum Score After Binary Swaps](https://leetcode.com/problems/maximum-score-after-binary-swaps/)
+
+- [Largest Rectangle in Histogram](https://leetcode.com/problems/largest-rectangle-in-histogram)
+
+- [Maximal Rectangle](https://leetcode.com/problems/maximal-rectangle)
+
+- [Count Subarrays With Cost Less Than Or Equal To K](https://leetcode.com/problems/count-subarrays-with-cost-less-than-or-equal-to-k/)

@@ -173,3 +173,13 @@ Complexities:
 
 ### Practice Problems:
 - [Remove Nth Node From End Of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list/submissions/1773234498/?envType=problem-list-v2&envId=linked-list)
+- [Divide An Array Into Subarrays With Minimum Cost II](https://leetcode.com/problems/divide-an-array-into-subarrays-with-minimum-cost-ii/)
+- [Minimum Removals To Balance Array](https://leetcode.com/problems/minimum-removals-to-balance-array/)
+- [Minimum Deletions To Make String Balanced](https://leetcode.com/problems/minimum-deletions-to-make-string-balanced/)
+- [Subarray Product Less Than K](https://leetcode.com/problems/subarray-product-less-than-k/)
+- [Number Of Smooth Descent Periods Of A Stock](https://leetcode.com/problems/number-of-smooth-descent-periods-of-a-stock/)
+- [Count Subarrays With Score Less Than K](https://leetcode.com/problems/count-subarrays-with-score-less-than-k/description/)
+- [Count Subarrays With Cost Less Than Or Equal To K](https://leetcode.com/problems/count-subarrays-with-cost-less-than-or-equal-to-k/)
+- [Max Consecutive Ones III](https://leetcode.com/problems/max-consecutive-ones-iii/description/)
+- [Longest Subarray Of 1s After Deleting One Element](https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/)
+- [Maximum Number Of Vowels In A Substring Of Given Length](https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/)
