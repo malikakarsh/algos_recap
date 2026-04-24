@@ -152,6 +152,7 @@ int clumsy(int n) {
 - [Circle Game](https://codeforces.com/problemset/problem/1695/B)
 - [Minimum Operations To Make Array Equal](https://leetcode.com/problems/minimum-operations-to-make-array-equal/description/)
 - [Minimum Number Of Operations To Make All Array Elements Equal To 1](https://leetcode.com/problems/minimum-number-of-operations-to-make-all-array-elements-equal-to-1/description/)
+- [Minimum Cost To Split Into Ones](https://leetcode.com/problems/minimum-cost-to-split-into-ones/)
 
 # Pigeonhole Principle
 
@@ -228,6 +229,9 @@ bool isPrime(long long n) {
 - [Simple Repetition](https://codeforces.com/problemset/problem/2093/C)
 - [Minimum LCM](https://codeforces.com/problemset/problem/1765/M)
 - [Yet Another Array Problem](https://codeforces.com/problemset/problem/2167/D)
+- [The 67th OEIS Problem](https://codeforces.com/contest/2218/problem/D)
+- [The 67th Permutation Problem](https://codeforces.com/contest/2218/problem/C)
+- [The 67th XOR Problem](https://codeforces.com/contest/2218/problem/E)
 
 # Numbers with Exactly 4 Divisors
 
@@ -297,3 +301,56 @@ For coins of value 3 and 5:
 ### Practice Problems:
 - [Social Experiment](https://codeforces.com/contest/2184/problem/A)
 - [Good ol' Numbers Coloring](https://codeforces.com/problemset/problem/1245/A)
+
+## Reachability In 2D Grids
+
+### Problem A: The Buffer Overflow Jump
+
+A penetration tester is trying to exploit a vulnerability by carefully controlling a memory pointer. The pointer starts at a base address conceptualized as a 2D grid coordinate (0,0). To bypass the system's security checks, the pointer can only be incremented using three specific operational codes (opcodes).
+
+Each opcode shifts the pointer's $(x,y)$ coordinates in the following ways:
+- **Opcode 1**: $(x_i, y_i) \to (x_i + 1, y_i + 2)$
+- **Opcode 2**: $(x_i, y_i) \to (x_i + 2, y_i + 1)$
+- **Opcode 3**: $(x_i, y_i) \to (x_i + 3, y_i + 3)$
+
+Determine if it is possible to reach the target address $(X, Y)$ using any combination of these opcodes, starting from $(0, 0)$ without ever jumping to a negative coordinate.
+
+**The Solution:**
+1. **Divisibility:** Notice that for all opcodes, the sum of increments (1+2, 2+1, 3+3) is a multiple of 3. Thus, $X+Y$ must be divisible by 3.
+2. **Linear Combination:** Notice that Opcode 3 is simply $(Opcode 1 + Opcode 2)$. Thus, we only need to check if $X$ and $Y$ can be formed by non-negative integers $a$ (Opcode 1) and $b$ (Opcode 2):
+   - $a + 2b = X$
+   - $2a + b = Y$
+3. **Solving for $a, b$:**
+   - $b = \frac{2X - Y}{3}$
+   - $a = \frac{2Y - X}{3}$
+4. **Boundary Conditions:** For $a, b \ge 0$, we must have $2X \ge Y$ and $2Y \ge X$.
+
+**Final O(1) Check:**
+- `(X + Y) % 3 == 0` AND `2*X >= Y` AND `2*Y >= X` $\implies$ **YES**
+
+---
+
+### Problem B: The Dream Architect
+
+You start at $(0,0)$ and want to reach $(X,Y)$ using three specific movement patterns:
+- **Shift 1**: $(x_i, y_i) \to (x_i + 2, y_i)$
+- **Shift 2**: $(x_i, y_i) \to (x_i, y_i + 2)$
+- **Shift 3**: $(x_i, y_i) \to (x_i + 1, y_i + 1)$
+
+Determine if it is possible to reach $(X,Y)$ starting from $(0,0)$.
+
+**The Solution:**
+1. **Parity:** Notice that all shifts $(+2,0), (0,+2), (+1,+1)$ preserve the parity of $X+Y$. Specifically, $X$ and $Y$ must have the same parity (both even or both odd), which means $X+Y$ must be even.
+2. **Linear Combination:**
+   - $2a + c = X$
+   - $2b + c = Y$
+   If $X \equiv Y \pmod 2$, we can always find non-negative $a, b, c$.
+3. **Traps:** Target coordinates can be negative. Since all shifts only increase coordinates, $X$ and $Y$ must be non-negative.
+
+**Final O(1) Check:**
+- `(X % 2 == Y % 2)` AND `X >= 0` AND `Y >= 0` $\implies$ **YES**
+
+### Practice Problems:
+- [Parkour Design](https://codeforces.com/contest/2202/problem/A)
+- [Count Commas in Range](https://leetcode.com/problems/count-commas-in-range/)
+- [Count Commas in Range II](https://leetcode.com/problems/count-commas-in-range-ii/description/)

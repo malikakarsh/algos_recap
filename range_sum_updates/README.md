@@ -144,3 +144,4 @@ public:
 - [Xenia and Bit Operations](https://codeforces.com/problemset/problem/339/D)
 - [Sereja and Brackets](https://codeforces.com/problemset/problem/380/C)
 - [Maximum Side Length of a Square With Sum Less than or Equal to Threshold](https://leetcode.com/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/)
+- [XOR After Range Multiplication Queries I](https://leetcode.com/problems/xor-after-range-multiplication-queries-i/)

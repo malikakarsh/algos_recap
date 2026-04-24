@@ -1750,3 +1750,5 @@ Notes:
 - [Path With Maximum Probability](https://leetcode.com/problems/path-with-maximum-probability/)
 - [Accounts Merge](https://leetcode.com/problems/accounts-merge/description/)
 - [Last Day Where You Can Still Cross](https://leetcode.com/problems/last-day-where-you-can-still-cross/)
+- [Smallest String With Swaps](https://leetcode.com/problems/smallest-string-with-swaps/description/)
+- [Minimize Hamming Distance After Swap Operations](https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/)

@@ -119,3 +119,6 @@ int findUnsortedSubarray(vector<int>& nums) {
 ```
 - [Shortest Unsorted Continous Subarray](https://leetcode.com/problems/shortest-unsorted-continuous-subarray/)
 - [Splitting Items](https://codeforces.com/problemset/problem/2004/C)
+- [Minimum Distinct](https://www.codechef.com/problems/MINDIS6)
+- [Minimum Swaps To Arrange A Binary Grid](https://leetcode.com/problems/minimum-swaps-to-arrange-a-binary-grid/)
+- [Integers with Multiple Sum of Two Cubes](https://leetcode.com/problems/integers-with-multiple-sum-of-two-cubes/)

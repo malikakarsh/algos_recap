@@ -318,4 +318,8 @@ int findUnsortedSubarray(const vector<int>& nums) {
 
 - [Maximal Rectangle](https://leetcode.com/problems/maximal-rectangle)
 
+- [Largest Submatrix With Rearrangements](https://leetcode.com/problems/largest-submatrix-with-rearrangements/)
+
 - [Count Subarrays With Cost Less Than Or Equal To K](https://leetcode.com/problems/count-subarrays-with-cost-less-than-or-equal-to-k/)
+
+- [Robot Collisions](https://leetcode.com/problems/robot-collisions/)

@@ -468,12 +468,15 @@ int factorial(int n, int depth = 0) {
 - [Partition With Given Difference](https://www.geeksforgeeks.org/problems/partitions-with-given-difference/1)
 - [0-1 Knapsack](https://www.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1)
 - [Coin Change](https://leetcode.com/problems/coin-change)
+- [Minimum Removals to Achieve Target XOR](https://leetcode.com/problems/minimum-removals-to-achieve-target-xor/description/)
 - [Target Sum](https://leetcode.com/problems/target-sum/)
 - [Coin Change II](https://leetcode.com/problems/coin-change-ii)
 - [Unbounded Knapsack](https://www.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1)
 -[Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/description/)
 - [Longest Common Substring](https://www.geeksforgeeks.org/problems/longest-common-substring1452/1)
 - [Longest Palindromic Subsequence](https://leetcode.com/problems/longest-palindromic-subsequence/)
+- [Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/)
+- [Longest Almost Palindromic Substring](https://leetcode.com/problems/longest-almost-palindromic-substring/)
 - [Minimum Insertions Steps To Make A String Palindrome](https://leetcode.com/problems/minimum-insertion-steps-to-make-a-string-palindrome/)
 - [Delete Operation For Two Strings](https://leetcode.com/problems/delete-operation-for-two-strings/)
 - [Shortest Common Supersequence](https://leetcode.com/problems/shortest-common-supersequence/)
@@ -493,6 +496,10 @@ int factorial(int n, int depth = 0) {
 - [Cut Ribbon](https://codeforces.com/problemset/problem/189/A)
 - [Trionic Array II](https://leetcode.com/problems/trionic-array-ii/description/)
 - [Champagne Tower](https://leetcode.com/problems/champagne-tower/)
+- [Count Sequences To K](https://leetcode.com/problems/count-sequences-to-k/description/)
+- [Minimum Path Sum](https://leetcode.com/problems/minimum-path-sum/description/)
+- [Maximum Non Negative Product In A Matrix](https://leetcode.com/problems/maximum-non-negative-product-in-a-matrix/)
+- [Maximum Amount Of Money Robot Can Earn](https://leetcode.com/problems/maximum-amount-of-money-robot-can-earn/)
 
 ### Longest Increasing Subsequence
 ```CPP
@@ -637,6 +644,7 @@ Notes:
 - [House Robber](https://leetcode.com/problems/house-robber/)
 - [House Robber II](https://leetcode.com/problems/house-robber-ii/)
 - [House Robber III](https://leetcode.com/problems/house-robber-iii/description/)
+- [Minimum Cost To Split Into Ones](https://leetcode.com/problems/minimum-cost-to-split-into-ones/)
 
 ## Digit DP
 

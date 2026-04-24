@@ -5,3 +5,7 @@
 - [Add and Divide](https://codeforces.com/problemset/problem/1485/A)
 - [LEQMAX](https://www.codechef.com/problems/LEQMAX)
 - [Partition Labels](https://leetcode.com/problems/partition-labels/)
+- [Minimum Changes To Make Alternating Binary String](https://leetcode.com/problems/minimum-changes-to-make-alternating-binary-string/)
+- [Minimum Operations to Make Array Parity Alternating](https://leetcode.com/problems/minimum-operations-to-make-array-parity-alternating/description/)
+- [Min And Operations](https://www.codechef.com/problems/BOP3)
+- [Minimum Operations To Sort A String](https://leetcode.com/problems/minimum-operations-to-sort-a-string/description/)

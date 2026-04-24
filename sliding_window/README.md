@@ -183,3 +183,4 @@ Complexities:
 - [Max Consecutive Ones III](https://leetcode.com/problems/max-consecutive-ones-iii/description/)
 - [Longest Subarray Of 1s After Deleting One Element](https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/)
 - [Maximum Number Of Vowels In A Substring Of Given Length](https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/)
+- [Equal Elements](https://www.codechef.com/problems/EQELE)
