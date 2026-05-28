@@ -751,3 +751,8 @@ class GoodHashTable {
 - [Minimum Distance Between Three Equal Elements II](https://leetcode.com/problems/minimum-distance-between-three-equal-elements-ii/)
 - [Minimum Absolute Distance Between Mirror Pairs](https://leetcode.com/problems/minimum-absolute-distance-between-mirror-pairs)
 - [Sum of Distances](https://leetcode.com/problems/sum-of-distances/)
+- [Minimum Cost to Move Between Indices](https://leetcode.com/problems/minimum-cost-to-move-between-indices/description/)
+- [Partition Array Into Disjoint Intervals](https://leetcode.com/problems/partition-array-into-disjoint-intervals/)
+- [Max Chunks To Make Sorted](https://leetcode.com/problems/max-chunks-to-make-sorted/description/)
+- [Max Chunks To Make Sorted II](https://leetcode.com/problems/max-chunks-to-make-sorted-ii/description/)
+- [Find The Length Of The Longest Common Prefix](https://leetcode.com/problems/find-the-length-of-the-longest-common-prefix)

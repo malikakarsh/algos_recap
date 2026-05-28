@@ -9,3 +9,4 @@
 - [Minimum Operations to Make Array Parity Alternating](https://leetcode.com/problems/minimum-operations-to-make-array-parity-alternating/description/)
 - [Min And Operations](https://www.codechef.com/problems/BOP3)
 - [Minimum Operations To Sort A String](https://leetcode.com/problems/minimum-operations-to-sort-a-string/description/)
+- [Assign Cookies](https://leetcode.com/problems/assign-cookies/description/)

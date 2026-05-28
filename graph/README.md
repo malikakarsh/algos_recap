@@ -1752,3 +1752,6 @@ Notes:
 - [Last Day Where You Can Still Cross](https://leetcode.com/problems/last-day-where-you-can-still-cross/)
 - [Smallest String With Swaps](https://leetcode.com/problems/smallest-string-with-swaps/description/)
 - [Minimize Hamming Distance After Swap Operations](https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/)
+- [Detect Cycles in 2D Grid](https://leetcode.com/problems/detect-cycles-in-2d-grid/)
+- [Minimum Jumps to Reach End via Prime Teleportation](https://leetcode.com/problems/minimum-jumps-to-reach-end-via-prime-teleportation)
+- [Jump Game IV](https://leetcode.com/problems/jump-game-iv/description/)

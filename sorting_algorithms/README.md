@@ -91,6 +91,34 @@ int inversions = 0;
             arr[left + i] = temp[i];
     }
 ```
+### Quick Select
+
+Quick Select is an efficient selection algorithm to find the *k*‑th smallest (or largest) element in an unsorted array.
+
+**Average‑case time complexity:** `O(n)`  
+**Worst‑case time complexity:** `O(n²)` – this occurs when the chosen pivot consistently partitions the array into one empty side and the other containing *n‑1* elements, e.g., when the input is already sorted (or reverse sorted) and the last element is always chosen as the pivot.
+
+```cpp
+int quickSelect(vector<int>& nums, int l, int r, int k) {
+    int pivot = nums[r];
+    int p = l;
+    for (int i = l; i < r; ++i) {
+        if (nums[i] <= pivot) {
+            swap(nums[i], nums[p]);
+            ++p;
+        }
+    }
+    swap(nums[p], nums[r]);
+
+    if (p == k) return nums[p];
+    if (p < k) return quickSelect(nums, p + 1, r, k);
+    return quickSelect(nums, l, p - 1, k);
+}
+```
+
+**When does it degrade to `O(n²)`?**
+If the pivot selection strategy yields highly unbalanced partitions at each recursive step (e.g., always the smallest or largest element), the recursion depth becomes linear, leading to the quadratic worst case.
+
 ### Practice Problems:
 - [Count Inversions Of Array](https://www.geeksforgeeks.org/problems/inversion-of-array-1587115620/1)
 
@@ -122,3 +150,7 @@ int findUnsortedSubarray(vector<int>& nums) {
 - [Minimum Distinct](https://www.codechef.com/problems/MINDIS6)
 - [Minimum Swaps To Arrange A Binary Grid](https://leetcode.com/problems/minimum-swaps-to-arrange-a-binary-grid/)
 - [Integers with Multiple Sum of Two Cubes](https://leetcode.com/problems/integers-with-multiple-sum-of-two-cubes/)
+- [Minimum Operations to Make a Uni‑Value Grid](https://leetcode.com/problems/minimum-operations-to-make-a-uni-value-grid)
+- [Minimum Moves to Equal Array Elements II](https://leetcode.com/problems/minimum-moves-to-equal-array-elements-ii/)
+- [Attend All Meetings](https://www.geeksforgeeks.org/problems/attend-all-meetings/1)
+- [Attend All Meetings II](https://www.geeksforgeeks.org/problems/attend-all-meetings-ii/1)

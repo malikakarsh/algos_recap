@@ -323,3 +323,29 @@ int findUnsortedSubarray(const vector<int>& nums) {
 - [Count Subarrays With Cost Less Than Or Equal To K](https://leetcode.com/problems/count-subarrays-with-cost-less-than-or-equal-to-k/)
 
 - [Robot Collisions](https://leetcode.com/problems/robot-collisions/)
+
+- [Online Stock Span](https://leetcode.com/problems/online-stock-span/description/)
+
+- [Daily Temperatures](https://leetcode.com/problems/daily-temperatures/description/)
+
+- [Basic Calculator](https://leetcode.com/problems/basic-calculator/description/)
+
+- [Infix to Postfix](https://www.geeksforgeeks.org/problems/infix-to-postfix-1587115620/1)
+
+- [Infix to Prefix](https://www.geeksforgeeks.org/problems/infix-to-prefix-notation/1)
+
+- [Postfix to Infix](https://www.geeksforgeeks.org/problems/postfix-to-infix-conversion/1)
+
+- [Postfix to Prefix](https://www.geeksforgeeks.org/problems/postfix-to-prefix-conversion/1)
+
+- [Prefix to Infix](https://www.geeksforgeeks.org/problems/prefix-to-infix-conversion/1)
+
+- [Prefix to Postfix](https://www.geeksforgeeks.org/problems/prefix-to-postfix-conversion/1)
+
+- [Sum of Subarray Minimums](https://leetcode.com/problems/sum-of-subarray-minimums/)
+
+- [Sum of Subarray Ranges](https://leetcode.com/problems/sum-of-subarray-ranges/)
+
+- [Max Chunks To Make Sorted](https://leetcode.com/problems/max-chunks-to-make-sorted/description/)
+
+- [Max Chunks To Make Sorted II](https://leetcode.com/problems/max-chunks-to-make-sorted-ii/description/)

@@ -448,6 +448,8 @@ int factorial(int n, int depth = 0) {
 **Key Insight**: Recursion trades **space** (call stack) for **code simplicity** and **problem decomposition**.
 
 ### Practice Problems:
+- [Maximum Number of Jumps to Reach the Last Index](https://leetcode.com/problems/maximum-number-of-jumps-to-reach-the-last-index/)
+- [Decode Ways](https://leetcode.com/problems/decode-ways/)
 - [Letter Combinations Of A Phone Number](https://leetcode.com/problems/letter-combinations-of-a-phone-number)
 - [Combination Sum](https://leetcode.com/problems/combination-sum/)
 - [Subsets](https://leetcode.com/problems/subsets/)
@@ -713,3 +715,13 @@ public:
 - [Count Numbers With Unique Digits](https://leetcode.com/problems/count-numbers-with-unique-digits/description/)
 - [Non Negative Integers Without Consecutive Ones](https://leetcode.com/problems/non-negative-integers-without-consecutive-ones/description/)
 - [Number Of Digit One](https://leetcode.com/problems/number-of-digit-one/description/)
+- [Knight Dialer](https://leetcode.com/problems/knight-dialer/description/)
+- [Word Break](https://leetcode.com/problems/word-break/)
+- [Cherry Pickup II](https://leetcode.com/problems/cherry-pickup-ii/description/)
+- [Cherry Pickup](https://leetcode.com/problems/cherry-pickup/description/)
+- [Maximum Sum Increasing Subsequence](https://www.geeksforgeeks.org/problems/maximum-sum-increasing-subsequence4749/1)
+- [Wildcard Matching](https://leetcode.com/problems/wildcard-matching/)
+- [Palindromic Substrings](https://leetcode.com/problems/palindromic-substrings/)
+- [Jump Game V](https://leetcode.com/problems/jump-game-v/)
+- [Count Square Submatrices With All Ones](https://leetcode.com/problems/count-square-submatrices-with-all-ones/)
+- [Maximum Profit In Job Scheduling](https://leetcode.com/problems/maximum-profit-in-job-scheduling/)

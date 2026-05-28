@@ -63,3 +63,5 @@ return l; // Both l and r point to the result
 - [Longest Strictly Increasing Subsequence With Non-Zero Bitwise AND](https://leetcode.com/problems/longest-strictly-increasing-subsequence-with-non-zero-bitwise-and/description/)
 - [Minimum K To Reduce Array Within Limit](https://leetcode.com/problems/minimum-k-to-reduce-array-within-limit/description/)
 - [Search a 2D Matrix](https://leetcode.com/problems/search-a-2d-matrix/description/)
+- [Aggressive Cows](https://www.geeksforgeeks.org/problems/aggressive-cows/1)
+- [My Calendar I](https://leetcode.com/problems/my-calendar-i/description/)
