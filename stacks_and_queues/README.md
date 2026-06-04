@@ -349,3 +349,4 @@ int findUnsortedSubarray(const vector<int>& nums) {
 - [Max Chunks To Make Sorted](https://leetcode.com/problems/max-chunks-to-make-sorted/description/)
 
 - [Max Chunks To Make Sorted II](https://leetcode.com/problems/max-chunks-to-make-sorted-ii/description/)
+- [Task Scheduler](https://leetcode.com/problems/task-scheduler/)
