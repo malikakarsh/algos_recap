@@ -1755,3 +1755,4 @@ Notes:
 - [Detect Cycles in 2D Grid](https://leetcode.com/problems/detect-cycles-in-2d-grid/)
 - [Minimum Jumps to Reach End via Prime Teleportation](https://leetcode.com/problems/minimum-jumps-to-reach-end-via-prime-teleportation)
 - [Jump Game IV](https://leetcode.com/problems/jump-game-iv/description/)
+- [Number Of Ways To Assign Edge Weights I](https://leetcode.com/problems/number-of-ways-to-assign-edge-weights-i/description/?envType=daily-question&envId=2026-06-11)

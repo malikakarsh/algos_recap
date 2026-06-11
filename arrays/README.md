@@ -234,3 +234,5 @@ You can suspect this method if the problem involves these specific keywords:
 - [Group Anagrams](https://leetcode.com/problems/group-anagrams/description/)
 - [Frogs and Jumps](https://www.geeksforgeeks.org/problems/frogs-and-jumps--170647/1)
 - [Task Scheduler II](https://leetcode.com/problems/task-scheduler-ii/)
+- [Partition Array According To Given Pivot](https://leetcode.com/problems/partition-array-according-to-given-pivot/)
+- [Rearrange Array Elements By Sign](https://leetcode.com/problems/rearrange-array-elements-by-sign/)
